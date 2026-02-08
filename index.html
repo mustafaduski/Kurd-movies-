@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | AI Powered Cinema</title>
+    <title>Movies4U | Live API Edition</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #050505; --glass: rgba(255, 255, 255, 0.05); }
+        :root { --accent: #ffcc00; --bg: #050505; }
         
         body { 
             margin: 0; font-family: 'Segoe UI', sans-serif; 
@@ -13,68 +13,123 @@
             background-attachment: fixed; color: white; overflow-x: hidden;
         }
 
-        /* Modern Navbar */
         nav {
             position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; 
-            align-items: center; padding: 15px 5%; z-index: 1000; background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;
+            align-items: center; padding: 15px 5%; z-index: 1000; background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;
         }
 
         .search-box {
-            background: rgba(255,255,255,0.1); border: 1px solid #333; padding: 10px 20px;
-            border-radius: 25px; color: white; width: 280px; outline: none; transition: 0.3s;
+            background: rgba(255,255,255,0.1); border: 1px solid #444; padding: 10px 20px;
+            border-radius: 25px; color: white; width: 250px; outline: none; transition: 0.3s;
         }
-        .search-box:focus { border-color: var(--accent); width: 350px; box-shadow: 0 0 15px rgba(255,204,0,0.2); }
+        .search-box:focus { border-color: var(--accent); width: 300px; }
 
-        /* Movie Container */
         .container { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 30px; padding: 120px 5% 50px; 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 25px; padding: 120px 5% 50px; 
         }
 
         .card {
-            background: var(--glass); border-radius: 20px; overflow: hidden;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 1px solid rgba(255,255,255,0.05); cursor: pointer; position: relative;
+            background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden;
+            transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
         }
-        .card:hover { transform: scale(1.08); border-color: var(--accent); box-shadow: 0 15px 40px rgba(0,0,0,0.7); }
-        .card img { width: 100%; height: 300px; object-fit: cover; }
-        .card-info { padding: 15px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); position: absolute; bottom: 0; width: 100%; box-sizing: border-box; }
-        .card-info h3 { font-size: 15px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-info span { color: var(--accent); font-weight: bold; font-size: 13px; }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card img { width: 100%; height: 270px; object-fit: cover; }
+        .card-info { padding: 12px; text-align: center; }
+        .card-info h3 { font-size: 14px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info span { color: var(--accent); font-size: 12px; font-weight: bold; }
 
-        /* Immersive Player Modal */
+        /* Modal Player */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; overflow-y: auto; }
-        .modal-inner { width: 90%; max-width: 1100px; margin: 40px auto; }
-        .video-wrapper { border-radius: 25px; overflow: hidden; box-shadow: 0 0 50px var(--accent); background: #000; position: relative; padding-top: 56.25%; }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .modal-inner { width: 90%; max-width: 1000px; margin: 40px auto; }
+        .video-box { position: relative; padding-top: 56.25%; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 0 40px var(--accent); }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        .close-btn { position: fixed; top: 25px; left: 25px; background: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 6000; }
+        .close-btn { position: fixed; top: 25px; left: 25px; background: var(--accent); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 6000; }
         
-        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 15px; } .search-box { width: 150px; } }
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 15px; } .search-box { width: 160px; } }
     </style>
 </head>
 <body>
 
 <nav>
     <div style="font-size: 26px; font-weight: 900; color: var(--accent); cursor: pointer;" onclick="getMovies()">MOVIES4U</div>
-    <input type="text" id="searchInput" class="search-box" placeholder="ناڤێ فیلمی بنڤیسە..." onkeyup="searchMovies()">
+    <input type="text" id="searchInput" class="search-box" placeholder="ناڤێ فیلمی..." onkeyup="searchMovies()">
 </nav>
 
 <div class="container" id="movieGrid">
-    </div>
+    <h2 style="grid-column: 1/-1; text-align: center;">ل هیڤیا بارکرنا فیلمان بە... 🍿</h2>
+</div>
 
 <div id="modal" class="modal">
     <button class="close-btn" onclick="closeM()">✕</button>
     <div class="modal-inner">
-        <div class="video-wrapper">
+        <div class="video-box">
             <iframe id="frame" src="" frameborder="0" allowfullscreen></iframe>
         </div>
-        <h1 id="mTitle" style="color: var(--accent); margin-top: 30px; font-size: 35px;"></h1>
+        <h1 id="mTitle" style="color: var(--accent); margin-top: 30px;"></h1>
         <p id="mDesc" style="color: #ccc; line-height: 1.8; font-size: 18px;"></p>
     </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    // TMDB API Key
+    const API_KEY = '82650220645068a8cf72d421d234a413'; 
+
+    async function getMovies() {
+        try {
+            const res = await fetch(`https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${API_KEY}`);
+            const data = await res.json();
+            renderMovies(data.results);
+        } catch (err) {
+            document.getElementById('movieGrid').innerHTML = "<h2>کێشەیەک د ئینتەرنێتێ دا هەیە! ⚠️</h2>";
+        }
+    }
+
+    function renderMovies(movies) {
+        const grid = document.getElementById('movieGrid');
+        grid.innerHTML = movies.map(m => `
+            <div class="card" onclick="openM(${m.id}, '${m.title.replace(/'/g, "\\'")}', '${m.overview.replace(/'/g, "\\'")}')">
+                <img src="${m.poster_path ? 'https://image.tmdb.org/t/p/w500'+m.poster_path : 'https://via.placeholder.com/500x750'}" alt="${m.title}">
+                <div class="card-info">
+                    <h3>${m.title}</h3>
+                    <span>⭐ ${m.vote_average}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function searchMovies() {
+        const term = document.getElementById('searchInput').value;
+        if(term.trim()) {
+            const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${term}`);
+            const data = await res.json();
+            renderMovies(data.results);
+        } else {
+            getMovies();
+        }
+    }
+
+    async function openM(id, title, desc) {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}`);
+        const data = await res.json();
+        const trailer = data.results.find(v => v.type === 'Trailer' || v.type === 'Teaser');
+        
+        document.getElementById('frame').src = trailer ? `https://www.youtube.com/embed/${trailer.key}?autoplay=1` : "";
+        document.getElementById('mTitle').innerText = title;
+        document.getElementById('mDesc').innerText = desc;
+        document.getElementById('modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeM() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('frame').src = "";
+        document.body.style.overflow = 'auto';
+    }
+
+    getMovies();
+</script>
 </body>
 </html>
