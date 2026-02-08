@@ -3,242 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Movies4U | سەکۆیا فیلمێن کوردی</title>
+    <title>Movies4U Kurdish | سینەما ب کوردی</title>
     <style>
         :root {
-            --accent-color: #ffc107;
-            --bg-dark: #0b0c10;
-            --card-dark: #1f2833;
-            --text-main: #ffffff;
-            --text-dim: #c5c6c7;
+            --accent: #ffc107;
+            --bg: #0b0c10;
+            --card-bg: #1a1d24;
+            --text: #ffffff;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
-            overflow-x: hidden;
+            padding: 0;
         }
 
-        /* Navbar Header */
+        /* Navbar */
         header {
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px 6%;
+            background-color: #000;
+            padding: 20px 5%;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            border-bottom: 2px solid var(--accent);
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid #333;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 900;
-            color: var(--accent-color);
-            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-transform: uppercase;
         }
 
-        .search-wrapper {
-            flex: 0 1 400px;
-        }
-
-        #searchInput {
+        .search-box {
             width: 100%;
+            max-width: 500px;
             padding: 12px 20px;
-            border-radius: 30px;
-            border: 2px solid #333;
-            background: #151515;
+            border-radius: 25px;
+            border: 1px solid #333;
+            background: #222;
             color: white;
+            outline: none;
+            font-size: 16px;
+        }
+
+        /* Categories Filter */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
             transition: 0.3s;
         }
 
-        #searchInput:focus {
-            border-color: var(--accent-color);
-            outline: none;
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
         }
 
-        /* Hero Section */
-        .hero {
-            padding: 40px 6%;
-            background: linear-gradient(to bottom, #1f2833, var(--bg-dark));
-            text-align: right;
-        }
-
-        .hero h2 { font-size: 32px; margin-bottom: 10px; }
-
-        /* Movie Grid */
-        .container {
-            padding: 20px 6% 60px;
+        /* Movies Grid */
+        .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            padding: 20px 5%;
         }
 
         .movie-card {
-            background: var(--card-dark);
-            border-radius: 15px;
+            background: var(--card-bg);
+            border-radius: 12px;
             overflow: hidden;
+            transition: 0.4s ease;
+            border: 1px solid #2a2e38;
             position: relative;
-            transition: all 0.4s ease;
-            border: 1px solid #2b2b2b;
         }
 
         .movie-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            border-color: var(--accent);
         }
 
         .poster {
             width: 100%;
-            height: 350px;
+            height: 300px;
             object-fit: cover;
         }
 
-        .badge {
+        .rating-tag {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--accent-color);
-            color: #000;
-            padding: 4px 10px;
-            font-weight: bold;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: var(--accent);
+            padding: 3px 8px;
             border-radius: 5px;
-            font-size: 13px;
+            font-weight: bold;
+            font-size: 12px;
         }
 
-        .movie-content {
-            padding: 20px;
-        }
-
-        .movie-content h3 {
-            margin: 0 0 10px;
-            font-size: 18px;
-            color: var(--accent-color);
-        }
-
-        .meta-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-dim);
-            margin-bottom: 15px;
-        }
-
-        .description {
-            font-size: 14px;
-            color: #999;
-            height: 40px;
-            overflow: hidden;
-            line-height: 1.4;
-            margin-bottom: 20px;
-        }
-
-        .btn-play {
-            display: block;
+        .info {
+            padding: 15px;
             text-align: center;
-            background: transparent;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 10px;
-            border-radius: 8px;
+        }
+
+        .info h3 {
+            margin: 0 0 5px;
+            font-size: 17px;
+            color: var(--accent);
+        }
+
+        .info p {
+            font-size: 13px;
+            color: #aaa;
+            margin: 0 0 15px;
+        }
+
+        .watch-btn {
+            display: block;
+            background: var(--accent);
+            color: black;
             text-decoration: none;
+            padding: 10px;
+            border-radius: 6px;
             font-weight: bold;
             transition: 0.3s;
         }
 
-        .btn-play:hover {
-            background: var(--accent-color);
-            color: #000;
+        .watch-btn:hover {
+            background: #e0a800;
         }
 
-        .hidden { display: none; }
-
         @media (max-width: 600px) {
-            .container { grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-            .poster { height: 220px; }
-            .description, .meta-info span:last-child { display: none; }
+            .movie-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .poster { height: 230px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">MOVIES<span>4U</span></div>
-    <div class="search-wrapper">
-        <input type="text" id="searchInput" onkeyup="search()" placeholder="ناڤێ فیلمی بنڤیسە...">
+    <div class="logo">Movies<span>4U</span></div>
+    <input type="text" id="searchInput" class="search-box" onkeyup="render()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
+    
+    <div class="filter-container">
+        <button class="filter-btn active" onclick="setCategory('all', this)">هەمی</button>
+        <button class="filter-btn" onclick="setCategory('action', this)">ئەکشن</button>
+        <button class="filter-btn" onclick="setCategory('drama', this)">دراما</button>
+        <button class="filter-btn" onclick="setCategory('animation', this)">کارتۆن</button>
     </div>
 </header>
 
-<div class="hero">
-    <h2>نویترین فیلمێن جیهانی</h2>
-    <p style="color: var(--text-dim);">تەماشای باشترین کوالێتی بکە ب زمانێ کوردی</p>
-</div>
-
-<div class="container" id="movieList">
-    
-    <div class="movie-card">
-        <span class="badge">IMDb 8.8</span>
-        <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg" class="poster" alt="Inception">
-        <div class="movie-content">
-            <h3 class="title">Inception</h3>
-            <div class="meta-info">
-                <span>📅 2010</span>
-                <span>🎭 زانستی / ئەکشن</span>
-            </div>
-            <p class="description">دزینا نهێنیان ژ ناڤ خەونێن خەلکی دا ب شێوەیەکێ پیشەیی.</p>
-            <a href="https://www.youtube.com/watch?v=YoHD9XEInc0" class="btn-play">▶ تەماشە بکە</a>
-        </div>
+<div class="movie-grid" id="movieList">
     </div>
-
-    <div class="movie-card">
-        <span class="badge">IMDb 9.0</span>
-        <img src="https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg" class="poster" alt="Dark Knight">
-        <div class="movie-content">
-            <h3 class="title">The Dark Knight</h3>
-            <div class="meta-info">
-                <span>📅 2008</span>
-                <span>🎭 دراما / تاوان</span>
-            </div>
-            <p class="description">باتمان هەوڵ ددەت گۆتام سیتی ژ دەستێ جۆکەرێ تێکدەر قورتال بکەت.</p>
-            <a href="#" class="btn-play">▶ تەماشە بکە</a>
-        </div>
-    </div>
-
-    <div class="movie-card">
-        <span class="badge">IMDb 8.6</span>
-        <img src="https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg" class="poster" alt="The Lion King">
-        <div class="movie-content">
-            <h3 class="title">The Lion King</h3>
-            <div class="meta-info">
-                <span>📅 1994</span>
-                <span>🎭 ئەنیمەیشن</span>
-            </div>
-            <p class="description">چیرۆکا سیمبایێ بچووک کو هەوڵ ددەت تەختێ بابێ خۆ بزڤرینتەڤە.</p>
-            <a href="#" class="btn-play">▶ تەماشە بکە</a>
-        </div>
-    </div>
-
-</div>
 
 <script>
-    function search() {
-        let filter = document.getElementById('searchInput').value.toLowerCase();
-        let cards = document.querySelectorAll('.movie-card');
-        
-        cards.forEach(card => {
-            let title = card.querySelector('.title').innerText.toLowerCase();
-            if(title.includes(filter)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
+    let movies = [];
+    let currentCat = 'all';
+
+    // کێشانا فیلمـان ژ JSON
+    async function loadMovies() {
+        try {
+            const res = await fetch('movies.json');
+            movies = await res.json();
+            render();
+        } catch (e) {
+            console.log("Error loading JSON. Make sure movies.json exists.");
+        }
+    }
+
+    function setCategory(cat, btn) {
+        currentCat = cat;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+
+    function render() {
+        const container = document.getElementById('movieList');
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        container.innerHTML = '';
+
+        movies.forEach(m => {
+            const matchesSearch = m.title.toLowerCase().includes(search);
+            const matchesCat = (currentCat === 'all' || m.category === currentCat);
+
+            if (matchesSearch && matchesCat) {
+                container.innerHTML += `
+                    <div class="movie-card">
+                        <span class="rating-tag">⭐ ${m.rating}</span>
+                        <img src="${m.poster}" class="poster">
+                        <div class="info">
+                            <h3>${m.title}</h3>
+                            <p>${m.year} | ${m.category}</p>
+                            <a href="${m.link}" class="watch-btn">تەماشە بکە</a>
+                        </div>
+                    </div>
+                `;
             }
         });
     }
+
+    loadMovies();
 </script>
 
 </body>
