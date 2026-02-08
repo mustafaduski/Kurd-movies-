@@ -6,9 +6,9 @@
     <title>Movies4U Kurdish | سینەما ب کوردی</title>
     <style>
         :root {
-            --accent: #ffc107;
-            --bg: #0b0c10;
-            --card-bg: #1a1d24;
+            --accent: #ffcc00;
+            --bg: #08090a;
+            --card-bg: #111418;
             --text: #ffffff;
         }
 
@@ -18,57 +18,62 @@
             color: var(--text);
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         /* Navbar */
         header {
-            background-color: #000;
+            background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.8) 100%);
             padding: 20px 5%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
             border-bottom: 2px solid var(--accent);
             position: sticky;
             top: 0;
             z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
         .logo {
-            font-size: 32px;
+            font-size: 35px;
             font-weight: 900;
             color: var(--accent);
-            margin-bottom: 15px;
             text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
         }
 
         .search-box {
-            width: 100%;
+            width: 90%;
             max-width: 500px;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 12px 25px;
+            border-radius: 30px;
             border: 1px solid #333;
-            background: #222;
+            background: #1a1a1a;
             color: white;
             outline: none;
             font-size: 16px;
+            transition: 0.3s;
         }
 
-        /* Categories Filter */
+        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
+
+        /* Filter Buttons */
         .filter-container {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin: 20px 0;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .filter-btn {
-            background: #222;
+            background: #1a1a1a;
             color: white;
-            border: 1px solid #444;
-            padding: 8px 20px;
-            border-radius: 20px;
+            border: 1px solid #333;
+            padding: 8px 22px;
+            border-radius: 25px;
             cursor: pointer;
+            font-weight: 600;
             transition: 0.3s;
         }
 
@@ -78,62 +83,47 @@
             border-color: var(--accent);
         }
 
-        /* Movies Grid */
+        /* Movie Grid */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
-            padding: 20px 5%;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+            padding: 30px 5%;
         }
 
         .movie-card {
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
             transition: 0.4s ease;
-            border: 1px solid #2a2e38;
+            border: 1px solid #222;
             position: relative;
         }
 
         .movie-card:hover {
             transform: translateY(-10px);
             border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        .poster {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
+        .poster-container { position: relative; height: 320px; }
+        .poster { width: 100%; height: 100%; object-fit: cover; }
 
         .rating-tag {
             position: absolute;
             top: 10px;
-            right: 10px;
+            left: 10px;
             background: rgba(0,0,0,0.8);
             color: var(--accent);
-            padding: 3px 8px;
-            border-radius: 5px;
+            padding: 4px 10px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 12px;
-        }
-
-        .info {
-            padding: 15px;
-            text-align: center;
-        }
-
-        .info h3 {
-            margin: 0 0 5px;
-            font-size: 17px;
-            color: var(--accent);
-        }
-
-        .info p {
             font-size: 13px;
-            color: #aaa;
-            margin: 0 0 15px;
         }
+
+        .info { padding: 15px; text-align: center; }
+        .info h3 { margin: 0 0 8px; font-size: 18px; color: #fff; }
+        .info p { font-size: 14px; color: #999; margin-bottom: 15px; }
 
         .watch-btn {
             display: block;
@@ -141,18 +131,49 @@
             color: black;
             text-decoration: none;
             padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
             transition: 0.3s;
+            border: none;
+            width: 100%;
         }
 
-        .watch-btn:hover {
-            background: #e0a800;
+        .watch-btn:hover { background: #e6b800; transform: scale(1.02); }
+
+        /* Video Modal (Player) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
+
+        .modal-content { width: 90%; max-width: 900px; position: relative; }
+        .close-btn {
+            position: absolute;
+            top: -50px; right: 0;
+            background: var(--accent);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        iframe { width: 100%; aspect-ratio: 16/9; border: 2px solid var(--accent); border-radius: 10px; }
+
+        .hidden { display: none; }
 
         @media (max-width: 600px) {
-            .movie-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .poster { height: 230px; }
+            .movie-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .poster-container { height: 240px; }
+            .logo { font-size: 25px; }
         }
     </style>
 </head>
@@ -160,42 +181,73 @@
 
 <header>
     <div class="logo">Movies<span>4U</span></div>
-    <input type="text" id="searchInput" class="search-box" onkeyup="render()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
+    <input type="text" id="searchInput" class="search-box" onkeyup="filterMovies()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
     
     <div class="filter-container">
         <button class="filter-btn active" onclick="setCategory('all', this)">هەمی</button>
-        <button class="filter-btn" onclick="setCategory('action', this)">ئەکشن</button>
-        <button class="filter-btn" onclick="setCategory('drama', this)">دراما</button>
-        <button class="filter-btn" onclick="setCategory('animation', this)">کارتۆن</button>
+        <button class="filter-btn" onclick="setCategory('Action', this)">ئەکشن</button>
+        <button class="filter-btn" onclick="setCategory('Drama', this)">دراما</button>
+        <button class="filter-btn" onclick="setCategory('Animation', this)">کارتۆن</button>
     </div>
 </header>
 
 <div class="movie-grid" id="movieList">
     </div>
 
-<script>
-    let movies = [];
-    let currentCat = 'all';
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeVideo()">داخستن ✕</button>
+        <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
 
-    // کێشانا فیلمـان ژ JSON
-    async function loadMovies() {
-        try {
-            const res = await fetch('movies.json');
-            movies = await res.json();
-            render();
-        } catch (e) {
-            console.log("Error loading JSON. Make sure movies.json exists.");
+<script>
+    // لێرە دشێی فیلمێن خۆ زێدە بکەی
+    let movies = [
+        {
+            title: "Interstellar",
+            category: "Drama",
+            year: "2014",
+            rating: "8.7",
+            poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg",
+            link: "https://www.youtube.com/embed/zSWdZVtXT7E"
+        },
+        {
+            title: "John Wick",
+            category: "Action",
+            year: "2014",
+            rating: "7.4",
+            poster: "https://m.media-amazon.com/images/M/MV5BMTU2NjA1ODgzMF5BMl5BanBnXkFtZTgwMTM2MTI4MjE@._V1_.jpg",
+            link: "https://www.youtube.com/embed/2AUmvWm5P2I"
+        },
+        {
+            title: "Spider-Man",
+            category: "Action",
+            year: "2021",
+            rating: "8.2",
+            poster: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg",
+            link: "https://www.youtube.com/embed/JfVOs4VSpmA"
+        },
+        {
+            title: "The Lion King",
+            category: "Animation",
+            year: "1994",
+            rating: "8.5",
+            poster: "https://m.media-amazon.com/images/M/MV5BYTYxNGMyZTYtMjE3MS00MzNjLWFjNmYtMDk3N2FmM2JiM2M1XkEyXkFqcGdeQXVyNjY5NDU4NzI@._V1_.jpg",
+            link: "https://www.youtube.com/embed/lFzVJEksoDY"
         }
-    }
+    ];
+
+    let currentCat = 'all';
 
     function setCategory(cat, btn) {
         currentCat = cat;
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        render();
+        filterMovies();
     }
 
-    function render() {
+    function filterMovies() {
         const container = document.getElementById('movieList');
         const search = document.getElementById('searchInput').value.toLowerCase();
         container.innerHTML = '';
@@ -207,12 +259,14 @@
             if (matchesSearch && matchesCat) {
                 container.innerHTML += `
                     <div class="movie-card">
-                        <span class="rating-tag">⭐ ${m.rating}</span>
-                        <img src="${m.poster}" class="poster">
+                        <div class="poster-container">
+                            <span class="rating-tag">⭐ ${m.rating}</span>
+                            <img src="${m.poster}" class="poster">
+                        </div>
                         <div class="info">
                             <h3>${m.title}</h3>
-                            <p>${m.year} | ${m.category}</p>
-                            <a href="${m.link}" class="watch-btn">تەماشە بکە</a>
+                            <p>${m.year} • ${m.category}</p>
+                            <button class="watch-btn" onclick="openVideo('${m.link}')">▶ تەماشە بکە</button>
                         </div>
                     </div>
                 `;
@@ -220,7 +274,26 @@
         });
     }
 
-    loadMovies();
+    function openVideo(url) {
+        const modal = document.getElementById('videoModal');
+        const frame = document.getElementById('videoFrame');
+        if(url && url !== "#") {
+            frame.src = url;
+            modal.style.display = 'flex';
+        } else {
+            alert("بوورە، ڤیدیۆ بەردەست نینە!");
+        }
+    }
+
+    function closeVideo() {
+        const modal = document.getElementById('videoModal');
+        const frame = document.getElementById('videoFrame');
+        frame.src = "";
+        modal.style.display = 'none';
+    }
+
+    // دەستپێکرنا نیشاندانا فیلمـان
+    filterMovies();
 </script>
 
 </body>
