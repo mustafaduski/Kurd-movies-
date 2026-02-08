@@ -3,144 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | Dynamic Experience</title>
+    <title>Movies4U | The Ultimate Galaxy Cinema</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #050505; --glass: rgba(255, 255, 255, 0.1); }
+        :root { --accent: #ffcc00; --glass: rgba(0, 0, 0, 0.7); --border: rgba(255, 204, 0, 0.3); }
         
         body { 
             margin: 0; font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg); color: white; overflow-x: hidden;
+            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=2000&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: white; overflow-x: hidden;
         }
 
-        /* 1. Dynamic Hero Section */
-        .hero {
-            height: 80vh; width: 100%; position: relative;
-            display: flex; align-items: center; padding: 0 5%;
-            overflow: hidden;
-        }
-        .hero-video {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: -1; filter: brightness(0.4);
-        }
-        .hero-content { max-width: 600px; z-index: 10; animation: fadeInUp 1s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 2. Neon Glass Navbar */
+        /* Glassmorphism Navigation */
         nav {
-            position: fixed; top: 0; width: 90%; margin: 0 5%;
+            position: fixed; top: 0; width: 100%; 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 0; z-index: 1000; border-bottom: 1px solid var(--glass);
-            backdrop-filter: blur(10px);
+            padding: 15px 5%; z-index: 1000; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+            box-sizing: border-box;
         }
 
-        /* 3. Horizontal Trending Row */
-        .section-title { padding: 40px 5% 10px; font-size: 24px; border-right: 4px solid var(--accent); margin-right: 5%; }
+        .points-badge { background: var(--accent); color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+
+        /* Hero Section */
+        .hero {
+            height: 70vh; display: flex; align-items: center; padding: 0 8%;
+            background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
+            margin-top: 60px;
+        }
+        .hero-content { max-width: 600px; }
+        .btn-play { padding: 12px 35px; background: var(--accent); border: none; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .btn-play:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--accent); }
+
+        /* Dynamic Horizontal Lists */
+        .section-title { padding: 40px 8% 10px; font-size: 24px; color: var(--accent); text-shadow: 0 0 10px rgba(255,204,0,0.5); }
         
-        .scrolling-wrapper {
-            display: flex; gap: 20px; overflow-x: auto; padding: 20px 5%;
-            scroll-behavior: smooth; scrollbar-width: none;
+        .movie-row {
+            display: flex; gap: 20px; overflow-x: auto; padding: 20px 8%;
+            scrollbar-width: none;
         }
-        .scrolling-wrapper::-webkit-scrollbar { display: none; }
+        .movie-row::-webkit-scrollbar { display: none; }
 
-        /* 4. Dynamic Cards */
+        /* Modern Movie Card */
         .card {
-            min-width: 220px; height: 330px; border-radius: 20px;
+            min-width: 200px; height: 300px; border-radius: 15px;
             position: relative; overflow: hidden; transition: 0.5s;
-            cursor: pointer; border: 1px solid var(--glass);
+            cursor: pointer; border: 1px solid var(--border);
+            background: var(--glass);
         }
-        .card:hover { 
-            transform: scale(1.1) z-index: 100; 
-            border-color: var(--accent); 
-            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
-        }
+        .card:hover { transform: scale(1.1) translateY(-10px); z-index: 10; border-color: var(--accent); }
         .card img { width: 100%; height: 100%; object-fit: cover; }
         .card-info {
-            position: absolute; bottom: 0; width: 100%; padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            transform: translateY(50px); transition: 0.4s; opacity: 0;
+            position: absolute; bottom: 0; width: 100%; padding: 15px;
+            background: linear-gradient(transparent, black);
+            opacity: 0; transition: 0.3s;
         }
-        .card:hover .card-info { transform: translateY(0); opacity: 1; }
+        .card:hover .card-info { opacity: 1; }
 
-        /* 5. Mood Switcher (Floating) */
-        .mood-box {
-            position: fixed; bottom: 30px; right: 30px; z-index: 100;
-            background: var(--accent); color: black; padding: 15px;
+        /* Mood Floating Button */
+        .mood-btn {
+            position: fixed; bottom: 30px; left: 30px; z-index: 100;
+            background: var(--accent); color: black; padding: 15px 25px;
             border-radius: 50px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Modal View */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; }
-        .m-content { width: 90%; max-width: 1000px; margin: 5vh auto; }
+        /* Immersive Player Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; overflow-y: auto; }
+        .modal-body { width: 90%; max-width: 1100px; margin: 50px auto; }
+        .video-box { position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 0 50px rgba(255,204,0,0.3); }
+        
+        .cast-list { display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; }
+        .cast-item { text-align: center; min-width: 80px; }
+        .cast-item img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+
+        .opinion-section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-top: 20px; }
+        textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; padding: 10px; border-radius: 10px; }
+
+        .close-x { font-size: 30px; color: white; background: none; border: none; cursor: pointer; float: left; }
     </style>
 </head>
 <body>
 
 <nav>
     <div style="font-size: 28px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
-    <div style="display: flex; gap: 20px;">
-        <span>فیلم</span>
-        <span>زنجیرە</span>
-        <span>دۆبلاج</span>
-    </div>
+    <div class="points-badge">⭐ <span id="pts">0</span> Points</div>
 </nav>
 
 <div class="hero">
-    <video class="hero-video" autoplay muted loop>
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-space-background-with-stars-and-nebula-41004-large.mp4" type="video/mp4">
-    </video>
     <div class="hero-content">
         <h1 style="font-size: 50px; margin: 0;">INTERSTELLAR</h1>
-        <p style="font-size: 18px; color: #ccc;">گەشتەکا پڕی مەترسی و جوانی دناڤ کونێن ڕەش دا بۆ ڕزگارکرنا مرۆڤایەتیێ.</p>
-        <button onclick="openM(0)" style="padding: 12px 30px; background: var(--accent); border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">نوکە تەماشە بکە</button>
+        <p style="font-size: 18px; color: #ddd; margin: 20px 0;">گەشتەکا پڕی هەست و خەیال دناڤ کونێن ڕەش دا بۆ دیتنا مالەکا نوی بۆ مروڤایەتیێ.</p>
+        <button class="btn-play" onclick="openM(0)">🎬 تەماشە بکە</button>
     </div>
 </div>
 
 <h2 class="section-title">🔥 تڕێندێن ڤێ حەفتیێ</h2>
-<div class="scrolling-wrapper" id="trending"></div>
+<div class="movie-row" id="trending"></div>
 
-<h2 class="section-title">🍿 نووترین فیلم</h2>
-<div class="scrolling-wrapper" id="newest"></div>
+<h2 class="section-title">✨ پێشنیارکری بۆ تە</h2>
+<div class="movie-row" id="recommended"></div>
 
-<div class="mood-box" onclick="alert('سایت دێ هێتە گوهۆڕین بۆ میزاجێ تە! ✨')">🎭 میزاجێ تە؟</div>
+<div class="mood-btn" onclick="alert('میزاجێ تە دێ هێتە گوهۆڕین! 🎭')">🎭 میزاجێ تە؟</div>
 
 <div id="modal" class="modal">
-    <div class="m-content">
-        <button onclick="closeM()" style="float: left; color: white; background: none; border: none; font-size: 30px; cursor: pointer;">✕</button>
-        <iframe id="frame" width="100%" height="550px" src="" frameborder="0" allowfullscreen style="border-radius: 20px; box-shadow: 0 0 50px var(--accent);"></iframe>
+    <div class="modal-body">
+        <button class="close-x" onclick="closeM()">✕</button>
+        <div class="video-box">
+            <iframe id="frame" width="100%" height="550px" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        
+        <h1 id="mTitle" style="color: var(--accent); margin-top: 30px;"></h1>
+        <p id="mDesc" style="color: #ccc; line-height: 1.8;"></p>
+
+        <h3>🎭 ئەکتەرێن سەرەکی</h3>
+        <div id="cast" class="cast-list"></div>
+
+        <div class="opinion-section">
+            <h3>💬 ڕایێن بینەران (+10 Points)</h3>
+            <textarea id="opInput" rows="2" placeholder="ڕایێ خۆ لێرە بنڤیسە..."></textarea>
+            <button class="btn-play" style="margin-top: 10px; padding: 8px 20px;" onclick="addOp()">پۆست بکە</button>
+            <div id="opList" style="margin-top: 20px;"></div>
+        </div>
     </div>
 </div>
 
 <script>
     const movies = [
-        { id: 0, title: "Interstellar", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E" },
-        { id: 1, title: "Joker", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc" },
-        { id: 2, title: "The Dark Knight", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY" },
-        { id: 3, title: "Avatar 2", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg", link: "https://www.youtube.com/embed/d9MyW72ELq0" },
-        { id: 4, title: "Inception", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0" }
+        { 
+            id: 0, title: "Interstellar", 
+            desc: "گەشتەکا پڕی مەترسی دناڤ گەردوونێ بێ دووماهی دا.", 
+            poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", 
+            link: "https://www.youtube.com/embed/zSWdZVtXT7E",
+            cast: [{n: "Matthew M.", i: "https://m.media-amazon.com/images/M/MV5BMTg0MDc3ODUwOV5BMl5BanBnXkFtZTcwMTk2NjY4Nw@@._V1_.jpg"}, {n: "Anne H.", i: "https://m.media-amazon.com/images/M/MV5BNjA5OTAyNzg3MV5BMl5BanBnXkFtZTcwOTcxMDY3OA@@._V1_.jpg"}],
+            ops: []
+        },
+        { 
+            id: 1, title: "The Joker", 
+            desc: "چیرۆکا تاری یا ئارسەر فلێک و چەوانیا بوونا وی ب جۆکەر.", 
+            poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", 
+            link: "https://www.youtube.com/embed/t433PEQGErc",
+            cast: [{n: "Joaquin P.", i: "https://m.media-amazon.com/images/M/MV5BMjA5NTA3NzQ5Nl5BMl5BanBnXkFtZTcwOTYzNjUzMw@@._V1_.jpg"}],
+            ops: []
+        }
     ];
 
+    let points = localStorage.getItem('userPts') || 0;
+    let currentId = null;
+
     function render() {
-        const trend = document.getElementById('trending');
-        const news = document.getElementById('newest');
-        
+        const row = document.getElementById('trending');
+        const rec = document.getElementById('recommended');
         const html = movies.map(m => `
             <div class="card" onclick="openM(${m.id})">
                 <img src="${m.poster}">
                 <div class="card-info">
                     <h4>${m.title}</h4>
-                    <small>⭐ 8.9</small>
+                    <small>⭐ 9.0</small>
                 </div>
             </div>
         `).join('');
-
-        trend.innerHTML = html;
-        news.innerHTML = html;
+        row.innerHTML = html;
+        rec.innerHTML = html;
+        document.getElementById('pts').innerText = points;
     }
 
     function openM(id) {
-        document.getElementById('frame').src = movies[id].link;
+        currentId = id;
+        const m = movies.find(x => x.id === id);
+        document.getElementById('frame').src = m.link;
+        document.getElementById('mTitle').innerText = m.title;
+        document.getElementById('mDesc').innerText = m.desc;
+        
+        document.getElementById('cast').innerHTML = m.cast.map(c => `
+            <div class="cast-item">
+                <img src="${c.i}">
+                <div style="font-size: 10px; margin-top: 5px;">${c.n}</div>
+            </div>
+        `).join('');
+
+        loadOps();
         document.getElementById('modal').style.display = 'block';
+    }
+
+    function addOp() {
+        const val = document.getElementById('opInput').value;
+        if(!val) return;
+        movies[currentId].ops.unshift(val);
+        points = parseInt(points) + 10;
+        localStorage.setItem('userPts', points);
+        document.getElementById('pts').innerText = points;
+        document.getElementById('opInput').value = "";
+        loadOps();
+    }
+
+    function loadOps() {
+        document.getElementById('opList').innerHTML = movies[currentId].ops.map(o => `
+            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px;">👤 ${o}</div>
+        `).join('');
     }
 
     function closeM() {
