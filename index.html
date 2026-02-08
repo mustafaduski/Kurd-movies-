@@ -3,129 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | The Ultimate Galaxy Cinema</title>
+    <title>Movies4U | Professional Cinema UI</title>
     <style>
-        :root { --accent: #ffcc00; --glass: rgba(0, 0, 0, 0.7); --border: rgba(255, 204, 0, 0.3); }
+        :root { 
+            --accent: #ffcc00; 
+            --bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
         
         body { 
-            margin: 0; font-family: 'Segoe UI', sans-serif; 
-            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=2000&q=80');
+            margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #080810 60%, #050505 100%);
             background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
             color: white; overflow-x: hidden;
         }
 
-        /* Glassmorphism Navigation */
+        /* Ambient Glow Background */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 80% 20%, rgba(255, 204, 0, 0.04) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 80%, rgba(255, 204, 0, 0.02) 0%, transparent 50%);
+            z-index: -1; pointer-events: none;
+        }
+
+        /* Modern Glass Navbar */
         nav {
             position: fixed; top: 0; width: 100%; 
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; z-index: 1000; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
-            box-sizing: border-box;
+            padding: 15px 5%; z-index: 1000; 
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); box-sizing: border-box;
         }
 
-        .points-badge { background: var(--accent); color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .pts-badge { background: var(--accent); color: black; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); }
 
-        /* Hero Section */
+        /* Dynamic Hero Section */
         .hero {
-            height: 70vh; display: flex; align-items: center; padding: 0 8%;
-            background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
+            height: 65vh; display: flex; align-items: center; padding: 0 8%;
+            background: linear-gradient(to right, #050505, transparent);
             margin-top: 60px;
         }
-        .hero-content { max-width: 600px; }
-        .btn-play { padding: 12px 35px; background: var(--accent); border: none; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        .btn-play:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--accent); }
+        .hero-content { max-width: 650px; animation: fadeIn 1.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dynamic Horizontal Lists */
-        .section-title { padding: 40px 8% 10px; font-size: 24px; color: var(--accent); text-shadow: 0 0 10px rgba(255,204,0,0.5); }
+        .btn-main { padding: 14px 40px; background: var(--accent); border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.4s; }
+        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent); }
+
+        /* Rows Styling */
+        .row-title { padding: 40px 8% 10px; font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .row-title::before { content: ""; width: 5px; height: 25px; background: var(--accent); border-radius: 10px; }
         
-        .movie-row {
-            display: flex; gap: 20px; overflow-x: auto; padding: 20px 8%;
-            scrollbar-width: none;
-        }
+        .movie-row { display: flex; gap: 25px; overflow-x: auto; padding: 20px 8%; scrollbar-width: none; }
         .movie-row::-webkit-scrollbar { display: none; }
 
-        /* Modern Movie Card */
+        /* Premium Movie Card */
         .card {
-            min-width: 200px; height: 300px; border-radius: 15px;
-            position: relative; overflow: hidden; transition: 0.5s;
-            cursor: pointer; border: 1px solid var(--border);
-            background: var(--glass);
+            min-width: 210px; height: 310px; border-radius: 20px;
+            position: relative; overflow: hidden; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; border: 1px solid var(--border); background: var(--glass);
         }
-        .card:hover { transform: scale(1.1) translateY(-10px); z-index: 10; border-color: var(--accent); }
+        .card:hover { transform: scale(1.08); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-info {
-            position: absolute; bottom: 0; width: 100%; padding: 15px;
-            background: linear-gradient(transparent, black);
-            opacity: 0; transition: 0.3s;
-        }
-        .card:hover .card-info { opacity: 1; }
+        .card-overlay { position: absolute; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); opacity: 0; transition: 0.3s; }
+        .card:hover .card-overlay { opacity: 1; }
 
-        /* Mood Floating Button */
-        .mood-btn {
-            position: fixed; bottom: 30px; left: 30px; z-index: 100;
-            background: var(--accent); color: black; padding: 15px 25px;
-            border-radius: 50px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* Immersive Player Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; overflow-y: auto; }
-        .modal-body { width: 90%; max-width: 1100px; margin: 50px auto; }
-        .video-box { position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 0 50px rgba(255,204,0,0.3); }
+        /* Modal & Player */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 5000; overflow-y: auto; }
+        .modal-inner { width: 90%; max-width: 1100px; margin: 40px auto; padding-bottom: 50px; }
+        .video-wrapper { position: relative; border-radius: 25px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 0 60px rgba(0,0,0,1); }
         
-        .cast-list { display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; }
-        .cast-item { text-align: center; min-width: 80px; }
-        .cast-item img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .cast-box { display: flex; gap: 15px; margin: 20px 0; overflow-x: auto; padding-bottom: 10px; }
+        .actor { text-align: center; min-width: 90px; }
+        .actor img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 8px; }
 
-        .opinion-section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-top: 20px; }
-        textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #444; color: white; padding: 10px; border-radius: 10px; }
+        .op-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-top: 30px; }
+        textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #333; color: white; padding: 15px; border-radius: 15px; font-size: 16px; margin-bottom: 15px; }
 
-        .close-x { font-size: 30px; color: white; background: none; border: none; cursor: pointer; float: left; }
+        .close-btn { position: fixed; top: 25px; left: 25px; background: white; color: black; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 6000; transition: 0.3s; }
+        .close-btn:hover { transform: rotate(90deg); background: var(--accent); }
     </style>
 </head>
 <body>
 
 <nav>
-    <div style="font-size: 28px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
-    <div class="points-badge">⭐ <span id="pts">0</span> Points</div>
+    <div style="font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -1px;">MOVIES4U</div>
+    <div class="pts-badge">⭐ <span id="pts">0</span> POINTS</div>
 </nav>
 
 <div class="hero">
     <div class="hero-content">
-        <h1 style="font-size: 50px; margin: 0;">INTERSTELLAR</h1>
-        <p style="font-size: 18px; color: #ddd; margin: 20px 0;">گەشتەکا پڕی هەست و خەیال دناڤ کونێن ڕەش دا بۆ دیتنا مالەکا نوی بۆ مروڤایەتیێ.</p>
-        <button class="btn-play" onclick="openM(0)">🎬 تەماشە بکە</button>
+        <div style="color: var(--accent); font-weight: bold; margin-bottom: 10px;">باشترینێن حەفتیێ</div>
+        <h1 style="font-size: 55px; margin: 0; line-height: 1.1;">INTERSTELLAR</h1>
+        <p style="font-size: 19px; color: #aaa; margin: 25px 0; line-height: 1.6;">گەشتەکا پڕی هەست و خەیال دناڤ کونێن ڕەش دا بۆ دیتنا مالەکا نوی بۆ مروڤایەتیێ.</p>
+        <button class="btn-main" onclick="openM(0)">🎬 نوکە تەماشە بکە</button>
     </div>
 </div>
 
-<h2 class="section-title">🔥 تڕێندێن ڤێ حەفتیێ</h2>
+<div class="row-title">تڕێندێن جیهانی</div>
 <div class="movie-row" id="trending"></div>
 
-<h2 class="section-title">✨ پێشنیارکری بۆ تە</h2>
-<div class="movie-row" id="recommended"></div>
-
-<div class="mood-btn" onclick="alert('میزاجێ تە دێ هێتە گوهۆڕین! 🎭')">🎭 میزاجێ تە؟</div>
+<div class="row-title">پێشنیارکری بۆ تە</div>
+<div class="movie-row" id="rec"></div>
 
 <div id="modal" class="modal">
-    <div class="modal-body">
-        <button class="close-x" onclick="closeM()">✕</button>
-        <div class="video-box">
-            <iframe id="frame" width="100%" height="550px" src="" frameborder="0" allowfullscreen></iframe>
+    <button class="close-btn" onclick="closeM()">✕</button>
+    <div class="modal-inner">
+        <div class="video-wrapper">
+            <iframe id="frame" width="100%" height="580px" src="" frameborder="0" allowfullscreen></iframe>
         </div>
         
-        <h1 id="mTitle" style="color: var(--accent); margin-top: 30px;"></h1>
-        <p id="mDesc" style="color: #ccc; line-height: 1.8;"></p>
+        <div style="padding: 10px;">
+            <h1 id="mTitle" style="color: var(--accent); font-size: 40px; margin-bottom: 10px;"></h1>
+            <p id="mDesc" style="color: #bbb; line-height: 1.8; font-size: 18px; max-width: 800px;"></p>
 
-        <h3>🎭 ئەکتەرێن سەرەکی</h3>
-        <div id="cast" class="cast-list"></div>
+            <h3 style="margin-top: 40px; border-right: 3px solid var(--accent); padding-right: 15px;">🎭 ئەکتەرێن سەرەکی</h3>
+            <div id="cast" class="cast-box"></div>
 
-        <div class="opinion-section">
-            <h3>💬 ڕایێن بینەران (+10 Points)</h3>
-            <textarea id="opInput" rows="2" placeholder="ڕایێ خۆ لێرە بنڤیسە..."></textarea>
-            <button class="btn-play" style="margin-top: 10px; padding: 8px 20px;" onclick="addOp()">پۆست بکە</button>
-            <div id="opList" style="margin-top: 20px;"></div>
+            <div class="op-box">
+                <h3 style="margin-top: 0;">💬 ڕایێن بینەران <small style="color: #777; font-weight: normal;">(خاڵێن خۆ زێدە بکە)</small></h3>
+                <textarea id="opInput" placeholder="ڕایێ خۆ بنڤیسە..."></textarea>
+                <button class="btn-main" style="padding: 10px 30px;" onclick="addOp()">پۆست بکە</button>
+                <div id="opList" style="margin-top: 25px;"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -134,19 +134,19 @@
     const movies = [
         { 
             id: 0, title: "Interstellar", 
-            desc: "گەشتەکا پڕی مەترسی دناڤ گەردوونێ بێ دووماهی دا.", 
+            desc: "گەشتەکا پڕی مەترسی دناڤ گەردوونێ بێ دووماهی دا بۆ قورتالکرنا زەویێ.", 
             poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", 
             link: "https://www.youtube.com/embed/zSWdZVtXT7E",
             cast: [{n: "Matthew M.", i: "https://m.media-amazon.com/images/M/MV5BMTg0MDc3ODUwOV5BMl5BanBnXkFtZTcwMTk2NjY4Nw@@._V1_.jpg"}, {n: "Anne H.", i: "https://m.media-amazon.com/images/M/MV5BNjA5OTAyNzg3MV5BMl5BanBnXkFtZTcwOTcxMDY3OA@@._V1_.jpg"}],
-            ops: []
+            ops: ["بۆچوونا من ئەڤە نایابترین فیلمێ مێژوویێیە."]
         },
         { 
             id: 1, title: "The Joker", 
-            desc: "چیرۆکا تاری یا ئارسەر فلێک و چەوانیا بوونا وی ب جۆکەر.", 
+            desc: "چیرۆکا تاری یا ئارسەر فلێک و چەوانیا بوونا وی ب مەزنترین تاوانبار.", 
             poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", 
             link: "https://www.youtube.com/embed/t433PEQGErc",
             cast: [{n: "Joaquin P.", i: "https://m.media-amazon.com/images/M/MV5BMjA5NTA3NzQ5Nl5BMl5BanBnXkFtZTcwOTYzNjUzMw@@._V1_.jpg"}],
-            ops: []
+            ops: ["ئەکشن و دراما ب شێوەیەکێ نایاب."]
         }
     ];
 
@@ -155,13 +155,13 @@
 
     function render() {
         const row = document.getElementById('trending');
-        const rec = document.getElementById('recommended');
+        const rec = document.getElementById('rec');
         const html = movies.map(m => `
             <div class="card" onclick="openM(${m.id})">
                 <img src="${m.poster}">
-                <div class="card-info">
-                    <h4>${m.title}</h4>
-                    <small>⭐ 9.0</small>
+                <div class="card-overlay">
+                    <h4 style="margin:0;">${m.title}</h4>
+                    <small style="color:var(--accent)">⭐ 9.2</small>
                 </div>
             </div>
         `).join('');
@@ -178,19 +178,20 @@
         document.getElementById('mDesc').innerText = m.desc;
         
         document.getElementById('cast').innerHTML = m.cast.map(c => `
-            <div class="cast-item">
+            <div class="actor">
                 <img src="${c.i}">
-                <div style="font-size: 10px; margin-top: 5px;">${c.n}</div>
+                <div style="font-size: 11px; font-weight:bold;">${c.n}</div>
             </div>
         `).join('');
 
         loadOps();
         document.getElementById('modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
 
     function addOp() {
         const val = document.getElementById('opInput').value;
-        if(!val) return;
+        if(!val.trim()) return;
         movies[currentId].ops.unshift(val);
         points = parseInt(points) + 10;
         localStorage.setItem('userPts', points);
@@ -201,13 +202,16 @@
 
     function loadOps() {
         document.getElementById('opList').innerHTML = movies[currentId].ops.map(o => `
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 8px;">👤 ${o}</div>
+            <div style="background: rgba(255,255,255,0.04); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-right: 3px solid var(--accent);">
+                <span style="font-size: 14px;">👤 ${o}</span>
+            </div>
         `).join('');
     }
 
     function closeM() {
         document.getElementById('modal').style.display = 'none';
         document.getElementById('frame').src = "";
+        document.body.style.overflow = 'auto';
     }
 
     render();
