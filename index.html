@@ -3,117 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | Big Library</title>
+    <title>Movies4U | Dynamic Experience</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #050505; --card: #121317; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+        :root { --accent: #ffcc00; --bg: #050505; --glass: rgba(255, 255, 255, 0.1); }
+        
+        body { 
+            margin: 0; font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg); color: white; overflow-x: hidden;
+        }
 
-        /* Navigation */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: #000; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
-        .logo { font-size: 26px; font-weight: 900; color: var(--accent); }
+        /* 1. Dynamic Hero Section */
+        .hero {
+            height: 80vh; width: 100%; position: relative;
+            display: flex; align-items: center; padding: 0 5%;
+            overflow: hidden;
+        }
+        .hero-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1; filter: brightness(0.4);
+        }
+        .hero-content { max-width: 600px; z-index: 10; animation: fadeInUp 1s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Category Bar */
-        .category-bar { display: flex; gap: 15px; padding: 20px 5%; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-        .category-bar::-webkit-scrollbar { display: none; }
-        .cat-item { background: #1a1a1a; padding: 8px 25px; border-radius: 20px; cursor: pointer; transition: 0.3s; border: 1px solid #333; }
-        .cat-item:hover, .cat-item.active { background: var(--accent); color: black; border-color: var(--accent); font-weight: bold; }
+        /* 2. Neon Glass Navbar */
+        nav {
+            position: fixed; top: 0; width: 90%; margin: 0 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; z-index: 1000; border-bottom: 1px solid var(--glass);
+            backdrop-filter: blur(10px);
+        }
 
-        /* Grid */
-        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; padding: 20px 5%; }
-        .movie-card { background: var(--card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; border: 1px solid #222; }
-        .movie-card:hover { transform: scale(1.05); border-color: var(--accent); }
-        .poster { width: 100%; height: 260px; object-fit: cover; }
-        .m-info { padding: 10px; text-align: center; }
-        .m-info h3 { font-size: 15px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* 3. Horizontal Trending Row */
+        .section-title { padding: 40px 5% 10px; font-size: 24px; border-right: 4px solid var(--accent); margin-right: 5%; }
+        
+        .scrolling-wrapper {
+            display: flex; gap: 20px; overflow-x: auto; padding: 20px 5%;
+            scroll-behavior: smooth; scrollbar-width: none;
+        }
+        .scrolling-wrapper::-webkit-scrollbar { display: none; }
 
-        /* Modal Player */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; overflow-y: auto; }
-        .modal-content { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        .close-btn { position: fixed; top: 20px; left: 20px; background: var(--accent); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+        /* 4. Dynamic Cards */
+        .card {
+            min-width: 220px; height: 330px; border-radius: 20px;
+            position: relative; overflow: hidden; transition: 0.5s;
+            cursor: pointer; border: 1px solid var(--glass);
+        }
+        .card:hover { 
+            transform: scale(1.1) z-index: 100; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+        }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-info {
+            position: absolute; bottom: 0; width: 100%; padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            transform: translateY(50px); transition: 0.4s; opacity: 0;
+        }
+        .card:hover .card-info { transform: translateY(0); opacity: 1; }
 
-        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; } }
+        /* 5. Mood Switcher (Floating) */
+        .mood-box {
+            position: fixed; bottom: 30px; right: 30px; z-index: 100;
+            background: var(--accent); color: black; padding: 15px;
+            border-radius: 50px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Modal View */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; }
+        .m-content { width: 90%; max-width: 1000px; margin: 5vh auto; }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="logo">MOVIES4U</div>
-    <input type="text" id="search" onkeyup="render()" placeholder="ل ناڤ ۱۰۰ فیلمـان بگەڕێ..." style="padding:8px; border-radius:15px; border:none; width:200px; background:#1a1a1a; color:white;">
+    <div style="font-size: 28px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
+    <div style="display: flex; gap: 20px;">
+        <span>فیلم</span>
+        <span>زنجیرە</span>
+        <span>دۆبلاج</span>
+    </div>
 </nav>
 
-<div class="category-bar" id="catBar">
-    <div class="cat-item active" onclick="filterCat('All', this)">هەمی</div>
-    <div class="cat-item" onclick="filterCat('Action', this)">ئەکشن</div>
-    <div class="cat-item" onclick="filterCat('Sci-Fi', this)">زانستی</div>
-    <div class="cat-item" onclick="filterCat('Horror', this)">ترسناک</div>
-    <div class="cat-item" onclick="filterCat('Drama', this)">دراما</div>
-    <div class="cat-item" onclick="filterCat('Animation', this)">کارتۆن</div>
+<div class="hero">
+    <video class="hero-video" autoplay muted loop>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-space-background-with-stars-and-nebula-41004-large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+        <h1 style="font-size: 50px; margin: 0;">INTERSTELLAR</h1>
+        <p style="font-size: 18px; color: #ccc;">گەشتەکا پڕی مەترسی و جوانی دناڤ کونێن ڕەش دا بۆ ڕزگارکرنا مرۆڤایەتیێ.</p>
+        <button onclick="openM(0)" style="padding: 12px 30px; background: var(--accent); border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">نوکە تەماشە بکە</button>
+    </div>
 </div>
 
-<div class="container" id="grid"></div>
+<h2 class="section-title">🔥 تڕێندێن ڤێ حەفتیێ</h2>
+<div class="scrolling-wrapper" id="trending"></div>
+
+<h2 class="section-title">🍿 نووترین فیلم</h2>
+<div class="scrolling-wrapper" id="newest"></div>
+
+<div class="mood-box" onclick="alert('سایت دێ هێتە گوهۆڕین بۆ میزاجێ تە! ✨')">🎭 میزاجێ تە؟</div>
 
 <div id="modal" class="modal">
-    <button class="close-btn" onclick="closeM()">✕</button>
-    <div class="modal-content">
-        <iframe id="frame" width="100%" height="450px" src="" frameborder="0" allowfullscreen></iframe>
-        <h1 id="mTitle" style="color: var(--accent);"></h1>
-        <p id="mDesc" style="color: #ccc; line-height: 1.6;"></p>
+    <div class="m-content">
+        <button onclick="closeM()" style="float: left; color: white; background: none; border: none; font-size: 30px; cursor: pointer;">✕</button>
+        <iframe id="frame" width="100%" height="550px" src="" frameborder="0" allowfullscreen style="border-radius: 20px; box-shadow: 0 0 50px var(--accent);"></iframe>
     </div>
 </div>
 
 <script>
     const movies = [
-        { id: 1, title: "Interstellar", cat: "Sci-Fi", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا مەزن بۆ ڕزگارکردنا مروڤایەتیێ." },
-        { id: 2, title: "The Dark Knight", cat: "Action", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "شەڕێ باتمان و جۆکەر." },
-        { id: 3, title: "Inception", cat: "Sci-Fi", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0", desc: "دزینا نهێنیان د خەونان دا." },
-        { id: 4, title: "The Conjuring", cat: "Horror", poster: "https://m.media-amazon.com/images/M/MV5BMTM3NjA1OTMyMV5BMl5BanBnXkFtZTcwNzExMDUxOQ@@._V1_.jpg", link: "https://www.youtube.com/embed/k10ETZ41q5o", desc: "چیرۆکەکا ترسناک یا ڕاستەقینە." },
-        { id: 5, title: "John Wick", cat: "Action", poster: "https://m.media-amazon.com/images/M/MV5BMTU2NjA1ODgzMF5BMl5BanBnXkFtZTgwMTM2MTI4MjE@._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkHuJ8I", desc: "تۆڵەسەندنەوەی پیاوێکی بێ وێنە." },
-        { id: 6, title: "Spider-Man", cat: "Action", poster: "https://m.media-amazon.com/images/M/MV5BMzI0NmVkMjEtYmY4MS00ZDMxLTlkZmEtMzU4MDQxYTMzMjU2XkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg", link: "https://www.youtube.com/embed/shW9i6k8cB0", desc: "گەشتەکا نوی د جیهانێن سپایدەرمان دا." },
-        { id: 7, title: "The Lion King", cat: "Animation", poster: "https://m.media-amazon.com/images/M/MV5BMjIwMjE1Nzc4NV5BMl5BanBnXkFtZTgwNDg4OTA1NzM@._V1_.jpg", link: "https://www.youtube.com/embed/7TavVZKewr0", desc: "چیرۆکا سیمبای پاشای دارستانێ." },
-        { id: 8, title: "Doker (Joker)", cat: "Drama", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا تاری یا ئارسەر فلێک." },
-        { id: 9, title: "Avatar 2", cat: "Sci-Fi", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg", link: "https://www.youtube.com/embed/d9MyW72ELq0", desc: "گەشتەکا نوی دناڤ ئاڤێن پاندۆرا دا." },
-        { id: 10, title: "The Nun", cat: "Horror", poster: "https://m.media-amazon.com/images/M/MV5BMjM3NzQ5NDcxOF5BMl5BanBnXkFtZTgwNzM4MTQ5NTM@._V1_.jpg", link: "https://www.youtube.com/embed/pzD9zGcUNrw", desc: "ترس دناڤ کەنیسەکێ دا." },
-        { id: 11, title: "Toy Story 4", cat: "Animation", poster: "https://m.media-amazon.com/images/M/MV5BMTYzMDM4NzkxOV5BMl5BanBnXkFtZTgwNzM1MDI2NzM@._V1_.jpg", link: "https://www.youtube.com/embed/wmiIUN-7qhE", desc: "گەشتەکا نوی یا یاری یان." },
-        { id: 12, title: "Gladiator", cat: "Drama", poster: "https://m.media-amazon.com/images/M/MV5BMDliMmNhNDEtODUyOS00MjNlLTgxODEtN2U3NzY2ZTA1NmE5XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg", link: "https://www.youtube.com/embed/P5ieIbInFpg", desc: "تۆڵەسەندنەوەیەک ل ڕۆما کۆن." }
+        { id: 0, title: "Interstellar", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E" },
+        { id: 1, title: "Joker", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc" },
+        { id: 2, title: "The Dark Knight", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY" },
+        { id: 3, title: "Avatar 2", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg", link: "https://www.youtube.com/embed/d9MyW72ELq0" },
+        { id: 4, title: "Inception", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0" }
     ];
 
-    let activeCat = "All";
-
-    function filterCat(c, el) {
-        activeCat = c;
-        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        render();
-    }
-
     function render() {
-        const grid = document.getElementById('grid');
-        const s = document.getElementById('search').value.toLowerCase();
+        const trend = document.getElementById('trending');
+        const news = document.getElementById('newest');
         
-        grid.innerHTML = movies
-            .filter(m => (activeCat === "All" || m.cat === activeCat) && m.title.toLowerCase().includes(s))
-            .map(m => `
-                <div class="movie-card" onclick="openM(${m.id})">
-                    <img src="${m.poster}" class="poster">
-                    <div class="m-info">
-                        <h3>${m.title}</h3>
-                        <small style="color:#888">${m.cat}</small>
-                    </div>
+        const html = movies.map(m => `
+            <div class="card" onclick="openM(${m.id})">
+                <img src="${m.poster}">
+                <div class="card-info">
+                    <h4>${m.title}</h4>
+                    <small>⭐ 8.9</small>
                 </div>
-            `).join('');
+            </div>
+        `).join('');
+
+        trend.innerHTML = html;
+        news.innerHTML = html;
     }
 
     function openM(id) {
-        const m = movies.find(x => x.id === id);
-        document.getElementById('frame').src = m.link;
-        document.getElementById('mTitle').innerText = m.title;
-        document.getElementById('mDesc').innerText = m.desc;
+        document.getElementById('frame').src = movies[id].link;
         document.getElementById('modal').style.display = 'block';
     }
 
     function closeM() {
         document.getElementById('modal').style.display = 'none';
-        document.getElementById('frame').src = '';
+        document.getElementById('frame').src = "";
     }
 
     render();
