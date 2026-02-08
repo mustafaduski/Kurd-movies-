@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | سینەمایا تەمام</title>
+    <title>Movies4U | سینەمایا پرۆفیشناڵ</title>
     <style>
         :root {
             --accent: #ffcc00;
@@ -23,7 +23,7 @@
         /* Hero Section with Video Background */
         .hero-section {
             position: relative;
-            height: 450px;
+            height: 500px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -38,17 +38,44 @@
             min-width: 100%; min-height: 100%;
             transform: translate(-50%, -50%);
             z-index: -1;
-            filter: brightness(30%);
+            filter: brightness(25%);
             object-fit: cover;
         }
 
-        .logo { font-size: 50px; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .logo { font-size: 50px; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 20px; }
         
         .search-box {
             width: 85%; max-width: 550px; padding: 15px 25px;
             border-radius: 40px; border: 2px solid var(--accent);
             background: rgba(0,0,0,0.6); color: white;
             font-size: 18px; backdrop-filter: blur(10px); outline: none;
+            margin-bottom: 20px;
+        }
+
+        /* Category Buttons */
+        .cat-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            z-index: 10;
+        }
+
+        .cat-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .cat-btn:hover, .cat-btn.active {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
         }
 
         /* Movie Grid */
@@ -58,7 +85,6 @@
             gap: 30px; padding: 50px 5%;
         }
 
-        /* Scroll Animation Styles */
         .movie-card {
             background: var(--card-bg);
             border-radius: 15px;
@@ -68,7 +94,7 @@
             position: relative;
             opacity: 0;
             transform: translateY(40px);
-            transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.6s ease-out;
         }
 
         .movie-card.show { opacity: 1; transform: translateY(0); }
@@ -78,16 +104,14 @@
         .rating-tag { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: var(--accent); padding: 5px 10px; border-radius: 8px; font-weight: bold; }
         .info { padding: 15px; text-align: center; }
 
-        /* Modal Player & Details */
+        /* Modal Player */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; overflow-y: auto; }
         .modal-content { width: 95%; max-width: 1100px; margin: 40px auto; background: #111; border-radius: 20px; position: relative; }
         iframe { width: 100%; aspect-ratio: 16/9; border-radius: 20px 20px 0 0; border: none; }
         .details-box { padding: 30px; text-align: right; }
-        .related-box { padding: 25px; background: #080808; border-top: 1px solid #222; }
-        .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
         .close-btn { position: absolute; top: -50px; right: 0; background: var(--accent); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
-        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 15px; } .logo { font-size: 35px; } }
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 15px; } .logo { font-size: 30px; } }
     </style>
 </head>
 <body>
@@ -99,6 +123,15 @@
     <div class="hero-content">
         <div class="logo">Movies<span>4U</span></div>
         <input type="text" id="searchInp" class="search-box" onkeyup="render()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
+        
+        <div class="cat-container">
+            <button class="cat-btn active" onclick="filterCat('All', this)">هەمی</button>
+            <button class="cat-btn" onclick="filterCat('Action', this)">ئەکشن</button>
+            <button class="cat-btn" onclick="filterCat('Drama', this)">دراما</button>
+            <button class="cat-btn" onclick="filterCat('Animation', this)">کارتۆن</button>
+            <button class="cat-btn" onclick="filterCat('Horror', this)">ترسناک</button>
+            <button class="cat-btn" onclick="filterCat('Sci-Fi', this)">زانستی</button>
+        </div>
     </div>
 </div>
 
@@ -109,35 +142,42 @@
         <button class="close-btn" onclick="closeVideo()">✕ داخستن</button>
         <iframe id="videoFrame" src="" allowfullscreen></iframe>
         <div class="details-box">
-            <h1 id="mTitle" style="color: var(--accent); margin-top:0;"></h1>
-            <p id="mMeta" style="color: #aaa;"></p>
-            <p id="mDesc" style="line-height: 1.8; font-size: 17px; color: #ddd;"></p>
-        </div>
-        <div class="related-box">
-            <h3 style="border-right: 4px solid var(--accent); padding-right: 12px;">فیلمێن نێزیک</h3>
-            <div id="relatedGrid" class="related-grid"></div>
+            <h1 id="mTitle" style="color: var(--accent); margin:0;"></h1>
+            <p id="mMeta" style="color: #aaa; margin-bottom:15px;"></p>
+            <p id="mDesc" style="line-height: 1.8; color: #ddd;"></p>
         </div>
     </div>
 </div>
 
 <script>
     const movies = [
-        { id: 0, title: "Interstellar", cat: "Sci-Fi", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن ڕەش دا بۆ قورتالکرنا مرۆڤایەتیێ پشتی زەوی تووشی قەیرانەکا مەزن دبیت." },
-        { id: 1, title: "The Dark Knight", cat: "Action", year: "2008", rate: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی مەزنترین دوژمنێ خۆ دبیتەوە کو جۆکەرە." },
-        { id: 2, title: "John Wick 4", cat: "Action", year: "2023", rate: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJlM2UtOTU4YjcyZTI2MWFmXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkXjzRY", desc: "جۆن ویک ڕێگەیەک بۆ تێکشکاندنی ئەنجومەنی باڵا دەدۆزێتەوە." },
-        { id: 3, title: "Inside Out 2", cat: "Animation", year: "2024", rate: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BYmU1ODVjMzAtOTIwNy00NzQxLTk4NjItYWU4NjQzZGVjMjk1XkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg", link: "https://www.youtube.com/embed/LEjhY2db0pY", desc: "هەستێن نوی ل دەڤ ڕایلی پەیدا دبن دەمێ دچیتە قۆناغەکا نوی یا ژیانێ." },
-        { id: 4, title: "Joker", cat: "Drama", year: "2019", rate: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا شکەستنا مروڤەکی و پەیدابوونا جۆکەری ل باژێڕێ گۆتام." },
-        { id: 5, title: "Dune: Part 2", cat: "Sci-Fi", year: "2024", rate: "8.8", poster: "https://m.media-amazon.com/images/M/MV5BN2QyZGU4ZDctOWMzMy00NTc5LThlOGQtODhmNDI1NmY5YzEzXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/Way9Dexny3w", desc: "جەنگەک ل سەر لمێن هەسارەیا ئاراکیس." },
-        { id: 6, title: "Smile 2", cat: "Horror", year: "2024", rate: "7.1", poster: "https://m.media-amazon.com/images/M/MV5BZjE2ZGVjZWYtMzcyMS00ZTFmLTg4OWUtZDRjNzg0YjUxNWU3XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg", link: "https://www.youtube.com/embed/0S434R-v8Tw", desc: "نەفرەتا بزەیا ترسناک ڤەدگەریتەڤە." },
-        { id: 7, title: "Spider-Verse", cat: "Animation", year: "2023", rate: "8.6", poster: "https://m.media-amazon.com/images/M/MV5BMzI0NmVkMjEtYmY4MS00ZDMxLTlkZmEtMzU4MDQxYTMzMjU2XkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg", link: "https://www.youtube.com/embed/shW9i6k8cB0", desc: "گەشتەکا نوی دناڤ جیهانێن سپایدەرمان دا." }
-        // تو دشێی لێرە فیلمێن پتر زێدە بکەی...
+        { id: 0, title: "Interstellar", cat: "Sci-Fi", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن ڕەش دا بۆ قورتالکرنا مرۆڤایەتیێ." },
+        { id: 1, title: "The Dark Knight", cat: "Action", year: "2008", rate: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی جۆکەر دبیتەوە." },
+        { id: 2, title: "Inside Out 2", cat: "Animation", year: "2024", rate: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BYmU1ODVjMzAtOTIwNy00NzQxLTk4NjItYWU4NjQzZGVjMjk1XkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg", link: "https://www.youtube.com/embed/LEjhY2db0pY", desc: "هەستێن نوی یێن ڕایلی." },
+        { id: 3, title: "Joker", cat: "Drama", year: "2019", rate: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا سەرهلدانا جۆکەری." },
+        { id: 4, title: "Dune: Part 2", cat: "Sci-Fi", year: "2024", rate: "8.8", poster: "https://m.media-amazon.com/images/M/MV5BN2QyZGU4ZDctOWMzMy00NTc5LThlOGQtODhmNDI1NmY5YzEzXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/Way9Dexny3w", desc: "جەنگ ل سەر هەسارەیا ئاراکیس." },
+        { id: 5, title: "Smile 2", cat: "Horror", year: "2024", rate: "7.1", poster: "https://m.media-amazon.com/images/M/MV5BZjE2ZGVjZWYtMzcyMS00ZTFmLTg4OWUtZDRjNzg0YjUxNWU3XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg", link: "https://www.youtube.com/embed/0S434R-v8Tw", desc: "نەفرەتا بزەیێ ڤەدگەریت." },
+        { id: 6, title: "John Wick 4", cat: "Action", year: "2023", rate: "7.8", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJlM2UtOTU4YjcyZTI2MWFmXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkXjzRY", desc: "تۆڵەسەندنەوەیا جۆن ویک." }
     ];
+
+    let currentCat = "All";
+
+    function filterCat(cat, btn) {
+        currentCat = cat;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
 
     function render() {
         const list = document.getElementById('movieList');
         const search = document.getElementById('searchInp').value.toLowerCase();
         list.innerHTML = '';
-        movies.filter(m => m.title.toLowerCase().includes(search)).forEach(m => {
+        
+        movies.filter(m => 
+            (currentCat === "All" || m.cat === currentCat) && 
+            m.title.toLowerCase().includes(search)
+        ).forEach(m => {
             list.innerHTML += `
                 <div class="movie-card" onclick="openVideo(${m.id})">
                     <span class="rating-tag">⭐ ${m.rate}</span>
@@ -160,19 +200,7 @@
         document.getElementById('mTitle').innerText = m.title;
         document.getElementById('mMeta').innerText = `${m.year} • ${m.cat} • IMDb ${m.rate}`;
         document.getElementById('mDesc').innerText = m.desc;
-
-        const grid = document.getElementById('relatedGrid');
-        grid.innerHTML = '';
-        movies.filter(x => x.cat === m.cat && x.id !== m.id).forEach(r => {
-            grid.innerHTML += `
-                <div onclick="openVideo(${r.id})" style="cursor:pointer; text-align:center;">
-                    <img src="${r.poster}" style="width:100%; height:150px; object-fit:cover; border-radius:10px;">
-                    <p style="font-size:11px; margin-top:5px;">${r.title}</p>
-                </div>`;
-        });
-
         document.getElementById('videoModal').style.display = 'block';
-        document.getElementById('videoModal').scrollTo(0,0);
     }
 
     function closeVideo() {
