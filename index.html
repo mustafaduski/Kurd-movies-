@@ -3,166 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | سینەمایا تەمام</title>
+    <title>Movies4U | فیلم و زنجیرە</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #08090a; --card-bg: #111418; --text: #ffffff; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
-
-        /* Top 10 Hero Slider */
-        .top-hero {
-            position: relative; height: 550px; width: 100%;
-            display: flex; align-items: flex-end; padding-bottom: 50px;
-            background: linear-gradient(to top, var(--bg) 10%, transparent 90%), url('https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1Zi00ZTY5LWE2N2ItODE5MWVjZTUyNjllXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg');
-            background-size: cover; background-position: center;
+        :root { 
+            --accent: #ffcc00; 
+            --bg: #0b0c10; 
+            --card-bg: #1f2833; 
+            --text: #ffffff; 
         }
 
-        .hero-info { margin-right: 5%; max-width: 600px; z-index: 2; }
-        .top-tag { background: var(--accent); color: black; padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 14px; }
-        .hero-title { font-size: 45px; margin: 15px 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
 
-        /* Navigation & Categories */
-        nav { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
-        .logo { font-size: 28px; font-weight: 900; color: var(--accent); cursor: pointer; }
-        .search-box { background: #222; border: 1px solid #444; color: white; padding: 10px 20px; border-radius: 20px; outline: none; width: 250px; }
+        /* Navigation */
+        nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 5%; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; font-weight: bold; }
+        .nav-links button.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
 
-        .cat-bar { display: flex; gap: 15px; padding: 20px 5%; overflow-x: auto; white-space: nowrap; }
-        .cat-btn { background: #1a1c1e; color: white; border: 1px solid #333; padding: 8px 20px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .cat-btn.active, .cat-btn:hover { background: var(--accent); color: black; border-color: var(--accent); }
+        /* Tabs Selection (Movies vs Shows) */
+        .tab-bar { display: flex; justify-content: center; gap: 30px; padding: 20px; background: #111; }
+        .tab-item { cursor: pointer; font-size: 20px; opacity: 0.6; transition: 0.3s; }
+        .tab-item.active { opacity: 1; color: var(--accent); border-bottom: 3px solid var(--accent); }
 
-        /* Grid */
-        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; padding: 20px 5%; }
-        .movie-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.5s; opacity: 0; transform: translateY(30px); }
-        .movie-card.show { opacity: 1; transform: translateY(0); }
-        .movie-card:hover { transform: scale(1.05); border-color: var(--accent); }
-        .poster { width: 100%; height: 280px; object-fit: cover; }
-        .info { padding: 12px; text-align: center; }
+        /* Grid Layout */
+        .container { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 25px; padding: 40px 5%; 
+        }
 
-        /* Modal & Opinions */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; overflow-y: auto; }
-        .modal-content { width: 95%; max-width: 1000px; margin: 40px auto; background: #111; border-radius: 20px; position: relative; }
-        iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 20px 20px 0 0; }
-        .details { padding: 30px; }
-        .opinions { padding: 0 30px 30px; }
-        .op-input { width: 100%; background: #222; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; resize: none; }
-        .op-btn { background: var(--accent); border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .comment { background: #16181a; padding: 15px; border-radius: 10px; margin-top: 10px; border-right: 3px solid var(--accent); }
+        .card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            transition: 0.4s; position: relative; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .poster { width: 100%; height: 300px; object-fit: cover; }
+        .badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: black; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 12px; }
 
-        .close-m { position: absolute; top: -50px; right: 0; color: white; background: none; border: none; font-size: 30px; cursor: pointer; }
+        /* Modal Player */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; overflow-y: auto; }
+        .modal-content { width: 90%; max-width: 1000px; margin: 50px auto; background: #000; border-radius: 20px; }
+        .close-btn { float: left; padding: 15px; color: white; cursor: pointer; font-size: 24px; }
 
-        @media (max-width: 600px) { .hero-title { font-size: 30px; } .container { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="logo" onclick="location.reload()">MOVIES<span>4U</span></div>
-    <input type="text" id="searchInp" class="search-box" onkeyup="render()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
+    <div style="font-size: 24px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
+    <div class="nav-links">
+        <input type="text" id="searchInp" onkeyup="render()" placeholder="لێگەڕیان..." style="padding: 5px 10px; border-radius: 15px; border: none;">
+    </div>
 </nav>
 
-<div class="top-hero" id="topHero">
-    <div class="hero-info">
-        <span class="top-tag">#1 یێ حەفتیێ</span>
-        <h1 class="hero-title" id="heroTitle">Oppenheimer</h1>
-        <button class="op-btn" onclick="openVideo(0)" style="padding: 15px 40px; font-size: 18px;">نۆکە تەماشە بکە</button>
-    </div>
+<div class="tab-bar">
+    <div class="tab-item active" id="btnMovies" onclick="changeTab('movie')">🎬 فیلم</div>
+    <div class="tab-item" id="btnShows" onclick="changeTab('show')">📺 زنجیرە</div>
 </div>
 
-<div class="cat-bar">
-    <button class="cat-btn active" onclick="filterCat('All', this)">هەمی</button>
-    <button class="cat-btn" onclick="filterCat('Action', this)">ئەکشن</button>
-    <button class="cat-btn" onclick="filterCat('Drama', this)">دراما</button>
-    <button class="cat-btn" onclick="filterCat('Animation', this)">کارتۆن</button>
-    <button class="cat-btn" onclick="filterCat('Horror', this)">ترسناک</button>
-</div>
+<div class="container" id="mainGrid"></div>
 
-<div class="container" id="movieList"></div>
-
-<div id="videoModal" class="modal">
+<div id="playerModal" class="modal">
     <div class="modal-content">
-        <button class="close-m" onclick="closeVideo()">✕</button>
-        <iframe id="videoFrame" src="" allowfullscreen></iframe>
-        <div class="details">
-            <h1 id="mTitle" style="color: var(--accent); margin:0;"></h1>
-            <p id="mMeta" style="color: #888;"></p>
-            <p id="mDesc" style="line-height: 1.8;"></p>
-        </div>
-        <div class="opinions">
-            <h3>💬 ڕایێن بینەران</h3>
-            <textarea id="opInp" class="op-input" rows="2" placeholder="ڕایێ خۆ بنڤیسە..."></textarea>
-            <button class="op-btn" onclick="addOp()">پۆست بکە</button>
-            <div id="opList"></div>
+        <span class="close-btn" onclick="closePlayer()">✕</span>
+        <iframe id="videoIframe" width="100%" height="500px" src="" frameborder="0" allowfullscreen></iframe>
+        <div style="padding: 30px;">
+            <h1 id="mTitle" style="color: var(--accent);"></h1>
+            <p id="mDesc" style="line-height: 1.6;"></p>
         </div>
     </div>
 </div>
 
 <script>
-    const movies = [
-        { id: 0, title: "Oppenheimer", cat: "Drama", year: "2023", rate: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1Zi00ZTY5LWE2N2ItODE5MWVjZTUyNjllXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/uYPbbksJxIg", desc: "چیرۆکا زانایێ ئەتۆمی جەی ڕۆبێرت ئۆپنهایمەر.", ops: ["فیلمەکێ گەلەک ب هێزە", "نواندن ل تروپکێ دابوو"] },
-        { id: 1, title: "Interstellar", cat: "Sci-Fi", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن ڕەش دا.", ops: ["ئەڤ فیلمە مێژوویە"] },
-        { id: 2, title: "Inside Out 2", cat: "Animation", year: "2024", rate: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BYmU1ODVjMzAtOTIwNy00NzQxLTk4NjItYWU4NjQzZGVjMjk1XkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg", link: "https://www.youtube.com/embed/LEjhY2db0pY", desc: "هەستێن نوی یێن ڕایلی.", ops: [] },
-        { id: 3, title: "John Wick 4", cat: "Action", year: "2023", rate: "7.8", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJlM2UtOTU4YjcyZTI2MWFmXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkXjzRY", desc: "جۆن ویک و شەڕێ دووماهیێ.", ops: ["ئەکشنێ ڕاستەقینە"] }
+    const content = [
+        // --- MOVIES ---
+        { id: 0, type: 'movie', title: "Interstellar", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن ڕەش دا." },
+        { id: 1, type: 'movie', title: "The Dark Knight", year: "2008", rate: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی جۆکەری دبیتەڤە." },
+        
+        // --- TV SHOWS ---
+        { id: 2, type: 'show', title: "Breaking Bad", year: "2008-2013", rate: "9.5", poster: "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTUtMzQ3NzQ4NmOtM2Q2XkEyXkFqcGdeQXVyMzE4MDkyNTA@._V1_.jpg", link: "https://www.youtube.com/embed/HhesaQXLuRY", desc: "مامۆستایەکی کیمیا دەست دەکات بە دروستکردنی ماددەی بێهۆشکەر." },
+        { id: 3, type: 'show', title: "Game of Thrones", year: "2011-2019", rate: "9.2", poster: "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTMtNGIwMi00MWVjLTk5NzMtZmUwZGEzN2VlYzMyXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg", link: "https://www.youtube.com/embed/KPLWWIOcool", desc: "جەنگ ل سەر تەختێ پاشایەتیێ دناڤبەرا خێزانێن مەزن." },
+        { id: 4, type: 'show', title: "Stranger Things", year: "2016-", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BMDZkYmVhNjMtNWU4MC00MDQxLWE3MjYtZGJlZTM0YjM4ZDBmXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/b9EkMc79ZSU", desc: "کۆمەڵە منداڵێک ڕووبەڕووی تشتێن سەیر دەبنەوە." }
     ];
 
-    let currentId = null;
-    let currentCat = "All";
+    let currentTab = 'movie';
 
-    function filterCat(cat, btn) {
-        currentCat = cat;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    function changeTab(type) {
+        currentTab = type;
+        document.getElementById('btnMovies').classList.toggle('active', type === 'movie');
+        document.getElementById('btnShows').classList.toggle('active', type === 'show');
         render();
     }
 
     function render() {
-        const list = document.getElementById('movieList');
-        const s = document.getElementById('searchInp').value.toLowerCase();
-        list.innerHTML = '';
-        movies.filter(m => (currentCat === "All" || m.cat === currentCat) && m.title.toLowerCase().includes(s)).forEach(m => {
-            list.innerHTML += `
-                <div class="movie-card" onclick="openVideo(${m.id})">
-                    <img src="${m.poster}" class="poster">
-                    <div class="info"><h3>${m.title}</h3><p>${m.year} • ${m.cat}</p></div>
+        const grid = document.getElementById('mainGrid');
+        const search = document.getElementById('searchInp').value.toLowerCase();
+        grid.innerHTML = '';
+
+        content.filter(item => item.type === currentTab && item.title.toLowerCase().includes(search)).forEach(item => {
+            grid.innerHTML += `
+                <div class="card" onclick="openPlayer(${item.id})">
+                    <span class="badge">⭐ ${item.rate}</span>
+                    <img src="${item.poster}" class="poster">
+                    <div style="padding:10px; text-align:center;">
+                        <h3 style="margin:5px 0; font-size:16px;">${item.title}</h3>
+                        <p style="font-size:12px; color:#888;">${item.year}</p>
+                    </div>
                 </div>`;
         });
-        setTimeout(reveal, 100);
     }
 
-    function reveal() {
-        document.querySelectorAll(".movie-card").forEach(c => {
-            if (c.getBoundingClientRect().top < window.innerHeight - 50) c.classList.add("show");
-        });
+    function openPlayer(id) {
+        const item = content.find(x => x.id === id);
+        document.getElementById('videoIframe').src = item.link;
+        document.getElementById('mTitle').innerText = item.title;
+        document.getElementById('mDesc').innerText = item.desc;
+        document.getElementById('playerModal').style.display = 'block';
     }
 
-    function openVideo(id) {
-        currentId = id;
-        const m = movies.find(x => x.id === id);
-        document.getElementById('videoFrame').src = m.link;
-        document.getElementById('mTitle').innerText = m.title;
-        document.getElementById('mMeta').innerText = `${m.year} • ${m.cat} • ⭐ ${m.rate}`;
-        document.getElementById('mDesc').innerText = m.desc;
-        loadOps();
-        document.getElementById('videoModal').style.display = 'block';
+    function closePlayer() {
+        document.getElementById('playerModal').style.display = 'none';
+        document.getElementById('videoIframe').src = '';
     }
 
-    function loadOps() {
-        const m = movies.find(x => x.id === currentId);
-        document.getElementById('opList').innerHTML = m.ops.map(o => `<div class="comment">${o}</div>`).join('');
-    }
-
-    function addOp() {
-        const val = document.getElementById('opInp').value;
-        if(!val) return;
-        movies.find(x => x.id === currentId).ops.unshift(val);
-        document.getElementById('opInp').value = "";
-        loadOps();
-    }
-
-    function closeVideo() {
-        document.getElementById('videoModal').style.display = 'none';
-        document.getElementById('videoFrame').src = '';
-    }
-
-    window.onscroll = reveal;
+    // Initial Render
     render();
 </script>
 </body>
