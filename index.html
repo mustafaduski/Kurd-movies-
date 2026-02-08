@@ -3,166 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | AI & Cinema Experience</title>
+    <title>Movies4U | The Ultimate Cinema</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #050608; --card: #111216; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; scroll-behavior: smooth; }
+        :root { --accent: #ffcc00; --bg: #050505; --card: #121317; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; transition: 0.5s; }
 
-        /* Navbar & Points */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
-        .user-stats { background: #1a1b20; padding: 5px 15px; border-radius: 20px; border: 1px solid var(--accent); font-size: 14px; }
+        /* Navbar & Tools */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: #000; position: sticky; top: 0; z-index: 1000; }
+        .nav-btns { display: flex; gap: 10px; }
+        .btn-surprise { background: linear-gradient(45deg, #ffcc00, #ff8800); border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; animation: glow 2s infinite; }
+        @keyframes glow { 0% { box-shadow: 0 0 5px var(--accent); } 50% { box-shadow: 0 0 20px var(--accent); } 100% { box-shadow: 0 0 5px var(--accent); } }
 
-        /* Mood Filter Section */
-        .mood-section { padding: 40px 5%; text-align: center; background: radial-gradient(circle at top, #1a1b20, var(--bg)); }
-        .mood-btns { display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
-        .mood-btn { background: #1a1b20; border: 1px solid #333; color: white; padding: 10px 25px; border-radius: 30px; cursor: pointer; transition: 0.3s; }
-        .mood-btn:hover { border-color: var(--accent); transform: translateY(-3px); }
-
-        /* Movie Grid & Skeleton Effect */
+        /* Movie Grid */
         .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; padding: 40px 5%; }
-        .movie-card { background: var(--card); border-radius: 15px; overflow: hidden; cursor: pointer; transition: 0.5s; position: relative; border: 1px solid #222; }
-        .movie-card:hover { transform: scale(1.05); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        
-        /* Video Preview on Hover */
-        .poster-wrapper { position: relative; height: 320px; overflow: hidden; }
-        .poster { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .preview-video { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; opacity: 0; transition: 0.5s; }
-        .movie-card:hover .preview-video { opacity: 1; }
-        .movie-card:hover .poster { opacity: 0; }
+        .movie-card { background: var(--card); border-radius: 18px; overflow: hidden; cursor: pointer; transition: 0.4s; border: 1px solid #222; position: relative; }
+        .movie-card:hover { transform: translateY(-10px); border-color: var(--accent); }
+        .poster { width: 100%; height: 320px; object-fit: cover; }
 
-        /* Watch Party Badge */
-        .live-badge { position: absolute; top: 15px; left: 15px; background: rgba(255, 0, 0, 0.8); color: white; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        /* Modal & Similar Movies */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; }
-        .modal-content { max-width: 1100px; margin: 30px auto; padding: 20px; }
-        .similar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
-        .sim-card { height: 150px; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #333; }
+        /* Modal & Cinema Mode */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; overflow-y: auto; }
+        .video-container { position: relative; width: 90%; max-width: 1000px; margin: 50px auto; border-radius: 20px; overflow: hidden; box-shadow: 0 0 100px rgba(255, 204, 0, 0.2); }
+        .ambient-glow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; filter: blur(80px); opacity: 0.4; z-index: -1; background: var(--accent); transition: 1s; }
         
-        .op-input { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 15px; border-radius: 10px; margin: 15px 0; }
-        .btn { background: var(--accent); border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        /* Rating Stars */
+        .rating-stars { color: #555; font-size: 25px; margin: 10px 0; }
+        .star { cursor: pointer; transition: 0.2s; }
+        .star.active { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+        /* Download Button */
+        .download-btn { background: #1a1a1a; color: white; border: 1px solid #333; padding: 12px 25px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+        .download-btn:hover { background: #222; border-color: #00ff88; color: #00ff88; }
+
+        .close-m { position: fixed; top: 20px; left: 20px; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 3000; }
     </style>
 </head>
 <body>
 
 <nav>
-    <div style="font-size: 24px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
-    <div class="user-stats">⭐ Points: <span id="userPoints">0</span></div>
+    <div style="font-size: 26px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
+    <div class="nav-btns">
+        <button class="btn-surprise" onclick="surpriseMe()">🎲 من سەرسام بکە</button>
+    </div>
 </nav>
 
-<div class="mood-section">
-    <h2>ئەڤرۆ کەیفا تە چەوا یە؟</h2>
-    <div class="mood-btns">
-        <button class="mood-btn" onclick="filterMood('Funny')">😂 بێزارم (کۆمیدی)</button>
-        <button class="mood-btn" onclick="filterMood('Action')">🔥 یێ ب هێزم (ئەکشن)</button>
-        <button class="mood-btn" onclick="filterMood('Sad')">😢 دڵتەنگم (دراما)</button>
-        <button class="mood-btn" onclick="filterMood('All')">✨ هەمی</button>
+<div class="container" id="grid"></div>
+
+<div id="modal" class="modal">
+    <button class="close-m" onclick="closeM()">✕</button>
+    <div class="video-container">
+        <div id="glow" class="ambient-glow"></div>
+        <iframe id="frame" width="100%" height="500px" src="" frameborder="0" allowfullscreen></iframe>
     </div>
-</div>
-
-<div class="container" id="movieGrid"></div>
-
-<div id="movieModal" class="modal">
-    <div class="modal-content">
-        <button class="btn" onclick="closeModal()" style="margin-bottom: 20px;">✕ داخستن</button>
-        <iframe id="mainFrame" width="100%" height="550px" src="" frameborder="0" allowfullscreen></iframe>
+    
+    <div style="max-width: 1000px; margin: 0 auto; padding: 0 20px 50px;">
+        <h1 id="mTitle" style="color: var(--accent); margin-bottom: 5px;"></h1>
+        <div class="rating-stars" id="rating">
+            <span class="star" onclick="rate(1)">★</span>
+            <span class="star" onclick="rate(2)">★</span>
+            <span class="star" onclick="rate(3)">★</span>
+            <span class="star" onclick="rate(4)">★</span>
+            <span class="star" onclick="rate(5)">★</span>
+        </div>
+        <p id="mDesc" style="line-height: 1.8; color: #ccc; font-size: 18px;"></p>
         
-        <div style="display: flex; gap: 40px; margin-top: 30px;">
-            <div style="flex: 2;">
-                <h1 id="mTitle" style="color: var(--accent);"></h1>
-                <p id="mDesc" style="color: #bbb; line-height: 1.8;"></p>
-                
-                <div style="background: #111; padding: 20px; border-radius: 15px; margin-top: 30px;">
-                    <h3>💬 ڕایێن بینەران (+10 Points بۆ هەر کۆمێنتەکێ)</h3>
-                    <textarea id="opInput" class="op-input" placeholder="ڕایێ خۆ بنڤیسە..."></textarea>
-                    <button class="btn" onclick="submitOpinion()">پۆست بکە</button>
-                    <div id="opList" style="margin-top: 20px;"></div>
-                </div>
-            </div>
-            
-            <div style="flex: 1;">
-                <h3>🎬 فیلمێن وەک ڤی</h3>
-                <div id="similarGrid" class="similar-grid"></div>
-            </div>
+        <button class="download-btn" onclick="alert('داونلۆد دەستپێکر... 📥')">
+            <span>⬇️ داونلۆد ب کوالێتیا 4K</span>
+        </button>
+
+        <div style="margin-top: 40px; background: #111; padding: 25px; border-radius: 15px;">
+            <h3>💬 ڕایێن بینەران</h3>
+            <textarea id="opInput" style="width:100%; background:#000; border:1px solid #333; color:white; padding:15px; border-radius:10px;" rows="2" placeholder="چیرۆکا ڤی فیلمی چەوا بوو؟"></textarea>
+            <button onclick="addOp()" style="background:var(--accent); border:none; padding:10px 20px; border-radius:5px; margin-top:10px; font-weight:bold; cursor:pointer;">پۆست بکە</button>
+            <div id="opList" style="margin-top:20px;"></div>
         </div>
     </div>
 </div>
 
 <script>
     const movies = [
-        { id: 0, title: "Interstellar", mood: "Action", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", preview: "https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا مەزن بۆ دیتنا جیهانەکا نوی.", viewers: "142", opinions: [] },
-        { id: 1, title: "The Hangover", mood: "Funny", rate: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BNGQwZjg5YmYtY2VkNC00NzliLTljYTctNzI5NmU3NWVkZjk0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", preview: "", link: "https://www.youtube.com/embed/tcdUjAy6R68", desc: "کۆمیدیەکا نایاب ل سەر گەشتەکا لاس ڤێگاس.", viewers: "89", opinions: [] },
-        { id: 2, title: "The Joker", mood: "Sad", rate: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", preview: "", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا تاری یا ئارسەر فلێک.", viewers: "210", opinions: [] }
+        { id: 0, title: "Interstellar", desc: "گەشتەکا مەزن دناڤ گەردوونێ بێ دووماهی دا.", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", ops: [] },
+        { id: 1, title: "Inception", desc: "دزینا نهێنیان دناڤ خەونێن خەلکی دا.", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0", ops: [] },
+        { id: 2, title: "The Dark Knight", desc: "باتمان ڕووبەڕووی مەزنترین دۆژمن دبیتەڤە.", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", ops: [] }
     ];
 
-    let userPoints = parseInt(localStorage.getItem('points')) || 0;
     let currentId = null;
 
-    function render(data = movies) {
-        const grid = document.getElementById('movieGrid');
-        grid.innerHTML = data.map(m => `
-            <div class="movie-card" onclick="openMovie(${m.id})">
-                <div class="live-badge">👁️ ${m.viewers} LIVE</div>
-                <div class="poster-wrapper">
-                    <img src="${m.poster}" class="poster">
-                    <video src="${m.preview}" class="preview-video" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
-                </div>
-                <div style="padding:15px; text-align:center;">
-                    <h3 style="margin:0;">${m.title}</h3>
-                    <small style="color:var(--accent)">${m.mood} • ⭐ ${m.rate}</small>
-                </div>
+    function render() {
+        document.getElementById('grid').innerHTML = movies.map(m => `
+            <div class="movie-card" onclick="openM(${m.id})">
+                <img src="${m.poster}" class="poster">
+                <div style="padding:15px; text-align:center;"><h3>${m.title}</h3></div>
             </div>
         `).join('');
-        document.getElementById('userPoints').innerText = userPoints;
     }
 
-    function filterMood(mood) {
-        if(mood === 'All') render(movies);
-        else render(movies.filter(m => m.mood === mood));
-    }
-
-    function openMovie(id) {
+    function openM(id) {
         currentId = id;
         const m = movies.find(x => x.id === id);
-        document.getElementById('mainFrame').src = m.link;
+        document.getElementById('frame').src = m.link;
         document.getElementById('mTitle').innerText = m.title;
         document.getElementById('mDesc').innerText = m.desc;
-        
-        // Similar Movies Logic
-        const similar = movies.filter(x => x.mood === m.mood && x.id !== id);
-        document.getElementById('similarGrid').innerHTML = similar.map(s => `
-            <div class="sim-card" onclick="openMovie(${s.id})">
-                <img src="${s.poster}" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-        `).join('');
-
-        loadOpinions();
-        document.getElementById('movieModal').style.display = 'block';
+        document.getElementById('modal').style.display = 'block';
+        loadOps();
+        rate(0); // Reset stars
     }
 
-    function submitOpinion() {
-        const inp = document.getElementById('opInput');
-        if(!inp.value.trim()) return;
-        
-        movies.find(x => x.id === currentId).opinions.unshift(inp.value);
-        userPoints += 10;
-        localStorage.setItem('points', userPoints);
-        document.getElementById('userPoints').innerText = userPoints;
-        inp.value = "";
-        loadOpinions();
+    function surpriseMe() {
+        const randomId = Math.floor(Math.random() * movies.length);
+        openM(randomId);
     }
 
-    function loadOpinions() {
-        const ops = movies.find(x => x.id === currentId).opinions;
-        document.getElementById('opList').innerHTML = ops.map(o => `
-            <div style="background:#1a1b20; padding:10px; border-radius:10px; margin-bottom:10px; border-right:3px solid var(--accent)">${o}</div>
-        `).join('');
+    function rate(n) {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((s, i) => s.classList.toggle('active', i < n));
     }
 
-    function closeModal() {
-        document.getElementById('movieModal').style.display = 'none';
-        document.getElementById('mainFrame').src = "";
+    function addOp() {
+        const val = document.getElementById('opInput').value;
+        if(!val) return;
+        movies.find(x => x.id === currentId).ops.unshift(val);
+        document.getElementById('opInput').value = "";
+        loadOps();
+    }
+
+    function loadOps() {
+        const ops = movies.find(x => x.id === currentId).ops;
+        document.getElementById('opList').innerHTML = ops.map(o => `<div style="background:#1a1a1a; padding:10px; border-radius:8px; margin-bottom:10px;">👤 ${o}</div>`).join('');
+    }
+
+    function closeM() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('frame').src = "";
     }
 
     render();
