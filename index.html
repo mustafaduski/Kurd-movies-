@@ -3,135 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | Netflix Edition</title>
+    <title>Movies4U | ب کوردی</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
         
-        :root { --accent: #e50914; --bg: #050505; }
-        body { margin: 0; font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: white; overflow-x: hidden; }
+        :root { --accent: #ffcc00; --bg: #050505; --card-bg: #111; }
+        body { margin: 0; font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: white; direction: rtl; }
 
         /* Navbar */
         nav {
             position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between;
-            align-items: center; padding: 15px 5%; z-index: 2000;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-            transition: 0.5s; box-sizing: border-box;
+            align-items: center; padding: 10px 5%; z-index: 2000;
+            background: rgba(0,0,0,0.95); border-bottom: 1px solid #222; box-sizing: border-box;
         }
+        .search-box { background: #222; border: 1px solid #333; padding: 8px 15px; border-radius: 20px; color: white; outline: none; }
 
-        /* SlideShow Header */
-        .hero {
-            position: relative; width: 100%; height: 80vh; overflow: hidden;
-            display: flex; align-items: center; justify-content: flex-start;
-        }
-        .slide {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            opacity: 0; transition: opacity 1s ease-in-out;
-            display: flex; align-items: center; padding: 0 8%;
-        }
+        /* SlideShow (Hero) */
+        .hero { position: relative; width: 100%; height: 400px; margin-top: 60px; overflow: hidden; }
+        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: 1s; }
         .slide.active { opacity: 1; }
-        .slide::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40%;
-            background: linear-gradient(to top, var(--bg), transparent);
-        }
-        .hero-content { position: relative; z-index: 10; max-width: 600px; }
-        .hero-content h1 { font-size: 50px; margin: 0; color: var(--accent); text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+        .hero-overlay { position: absolute; bottom: 0; width: 100%; height: 50%; background: linear-gradient(transparent, var(--bg)); }
 
-        /* Containers */
-        .section-title { padding: 40px 5% 10px; font-size: 22px; font-weight: bold; }
+        /* Movie Grid */
+        .section-title { padding: 30px 5% 10px; font-size: 24px; color: var(--accent); font-weight: bold; }
         .container { 
-            display: flex; gap: 15px; padding: 10px 5% 40px; 
-            overflow-x: auto; scrollbar-width: none;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; padding: 10px 5% 50px; 
         }
-        .container::-webkit-scrollbar { display: none; }
-        
-        .card { 
-            min-width: 180px; background: #111; border-radius: 8px; overflow: hidden; 
-            transition: 0.3s; border: 1px solid #222; cursor: pointer;
-        }
-        .card:hover { transform: scale(1.1); z-index: 100; border-color: white; }
-        .card img { width: 100%; height: 260px; object-fit: cover; }
 
-        @media (max-width: 600px) { .hero-content h1 { font-size: 30px; } .hero { height: 50vh; } }
+        .card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            border: 1px solid #222; transition: 0.3s; cursor: pointer;
+        }
+        .card:hover { transform: scale(1.05); border-color: var(--accent); }
+        .card img { width: 100%; height: 240px; object-fit: cover; }
+        .card-info { padding: 10px; text-align: center; }
+        .card-info h3 { font-size: 14px; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Video Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; }
+        .modal-content { width: 90%; max-width: 800px; margin: 10vh auto; }
+        .video-box { position: relative; padding-top: 56.25%; background: #000; border-radius: 10px; overflow: hidden; }
+        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .close { position: fixed; top: 20px; left: 20px; background: var(--accent); border: none; padding: 10px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; } .hero { height: 250px; } }
     </style>
 </head>
 <body>
 
-<nav id="navbar">
-    <div style="font-size: 28px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
-    <div style="background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 14px;">گەڕیان 🔍</div>
+<nav>
+    <div style="font-size: 24px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
+    <input type="text" id="search" class="search-box" placeholder="بگەڕێ..." onkeyup="handleSearch()">
 </nav>
 
-<div class="hero" id="hero">
-    <div class="slide active" style="background-image: linear-gradient(to right, rgba(0,0,0,0.8), transparent), url('https://wallpapercave.com/wp/wp3892015.jpg');">
-        <div class="hero-content">
-            <h1>INTERSTELLAR</h1>
-            <p>گەشتەکا گەردوونی کو چاڤەڕێی تە دکەت...</p>
-        </div>
-    </div>
-    <div class="slide" style="background-image: linear-gradient(to right, rgba(0,0,0,0.8), transparent), url('https://wallpapercave.com/wp/wp4447475.jpg');">
-        <div class="hero-content">
-            <h1>THE JOKER</h1>
-            <p>چیرۆکا تاری یا ئارسەر فلێک و باژێرێ گۆثەم.</p>
-        </div>
+<div class="hero">
+    <div class="slide active" style="background-image: url('https://wallpapercave.com/wp/wp3892015.jpg');"></div>
+    <div class="slide" style="background-image: url('https://wallpapercave.com/wp/wp4447475.jpg');"></div>
+    <div class="hero-overlay"></div>
+</div>
+
+<div class="section-title">🎙️ فیلمێن دۆبلاژکری</div>
+<div class="container" id="dubbedGrid"></div>
+
+<div class="section-title">🌍 نووترین فیلمێن جیهانی</div>
+<div class="container" id="globalGrid"></div>
+
+<div id="modal" class="modal">
+    <button class="close" onclick="closeM()">✕</button>
+    <div class="modal-content">
+        <div class="video-box"><iframe id="frame" src="" frameborder="0" allowfullscreen></iframe></div>
+        <h2 id="mTitle" style="text-align: center; margin-top: 20px;"></h2>
     </div>
 </div>
 
-<div class="section-title">🎙️ دۆبلاژکریێن کوردی</div>
-<div class="container" id="dubbedList"></div>
-
-<div class="section-title">🌍 فیلمێن جیهانی</div>
-<div class="container" id="globalList"></div>
-
 <script>
-    // ١. سیستەمێ SlideShow
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    function nextSlide() {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.add('active');
-    }
-    setInterval(nextSlide, 5000); // هەر ٥ چرکەیا دگوهۆڕیت
-
-    // ٢. داتایێن فیلمـان
     const API_KEY = '82650220645068a8cf72d421d234a413';
     const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
-    async function fetchMovies() {
+    // ١. لیستا فیلمێن دۆبلاژکری (Manual)
+    const dubbedMovies = [
+        { title: "Interstellar (دۆبلاژ)", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E" },
+        { title: "The Joker (دۆبلاژ)", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc" }
+    ];
+
+    // ٢. نیشاندانا فیلمێن دۆبلاژ
+    function renderDubbed() {
+        const grid = document.getElementById('dubbedGrid');
+        grid.innerHTML = dubbedMovies.map(m => `
+            <div class="card" onclick="openM('${m.title}', '${m.link}')">
+                <img src="${m.poster}">
+                <div class="card-info"><h3>${m.title}</h3></div>
+            </div>
+        `).join('');
+    }
+
+    // ٣. ئینانا فیلمێن جیهانی (Automatic)
+    async function getGlobal() {
         try {
             const res = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc`);
             const data = await res.json();
-            
-            const globalGrid = document.getElementById('globalList');
-            const dubbedGrid = document.getElementById('dubbedList');
-
-            // فیلمێن جیهانی
-            globalGrid.innerHTML = data.results.map(m => `
-                <div class="card">
+            const grid = document.getElementById('globalGrid');
+            grid.innerHTML = data.results.map(m => `
+                <div class="card" onclick="openM('${m.title}', '')">
                     <img src="${IMG_PATH + m.poster_path}">
-                    <div style="padding:10px; font-size:12px; text-align:center;">${m.title}</div>
+                    <div class="card-info">
+                        <h3>${m.title}</h3>
+                        <span style="color:var(--accent)">⭐ ${m.vote_average}</span>
+                    </div>
                 </div>
             `).join('');
-
-            // فیلمێن دۆبلاژ (وەک نموونە)
-            dubbedGrid.innerHTML = data.results.slice(5, 15).map(m => `
-                <div class="card">
-                    <img src="${IMG_PATH + m.poster_path}">
-                    <div style="padding:10px; font-size:12px; text-align:center;">${m.title} (دۆبلاژ)</div>
-                </div>
-            `).join('');
-
-        } catch (e) { console.log("Error fetching data"); }
+        } catch (e) { console.log("API Error"); }
     }
 
-    // گوهۆڕینا ڕەنگێ Navbar دەمێ سکرۆڵ دکەی
-    window.onscroll = function() {
-        if (window.scrollY > 50) document.getElementById('navbar').style.background = "#050505";
-        else document.getElementById('navbar').style.background = "transparent";
-    };
+    // ٤. سلایدشۆ
+    let sIdx = 0;
+    function startSlides() {
+        const slides = document.querySelectorAll('.slide');
+        setInterval(() => {
+            slides[sIdx].classList.remove('active');
+            sIdx = (sIdx + 1) % slides.length;
+            slides[sIdx].classList.add('active');
+        }, 4000);
+    }
 
-    fetchMovies();
+    function openM(title, link) {
+        if(!link) { alert("بو ڤی فلیمی تڕەیلەر نینە"); return; }
+        document.getElementById('frame').src = link;
+        document.getElementById('mTitle').innerText = title;
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    function closeM() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('frame').src = "";
+    }
+
+    renderDubbed();
+    getGlobal();
+    startSlides();
 </script>
 </body>
 </html>
