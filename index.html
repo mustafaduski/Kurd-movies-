@@ -3,81 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KurdCinema Premium</title>
+    <title>Movies4U Kurdish | سینەما ب کوردی</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #0b0c10; --card: #1f2833; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: white; margin: 0; padding: 0; }
-        
-        /* Navbar */
-        header { background: #000; padding: 20px 5%; text-align: center; border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 30px; font-weight: 900; color: var(--accent); margin-bottom: 10px; }
-        .search-box { width: 100%; max-width: 400px; padding: 10px; border-radius: 20px; border: none; background: #222; color: white; outline: none; }
+        :root {
+            --accent: #ffcc00;
+            --bg: #08090a;
+            --card-bg: #111418;
+            --text: #ffffff;
+        }
 
-        /* Grid */
-        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 30px 5%; }
-        .movie-card { background: var(--card); border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; border: 1px solid #333; }
-        .movie-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .poster { width: 100%; height: 280px; object-fit: cover; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Navbar & Header */
+        header {
+            background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.8) 100%);
+            padding: 20px 5%;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 35px;
+            font-weight: 900;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .search-box {
+            width: 90%;
+            max-width: 500px;
+            padding: 12px 25px;
+            border-radius: 30px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            outline: none;
+            font-size: 16px;
+        }
+
+        /* Movie Grid */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+            padding: 30px 5%;
+        }
+
+        .movie-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: 0.4s ease;
+            border: 1px solid #222;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+
+        .poster {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+
+        .rating-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
         .info { padding: 15px; text-align: center; }
-        .watch-btn { background: var(--accent); color: black; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
+        .info h3 { margin: 0 0 8px; font-size: 18px; color: #fff; }
 
-        /* Modal Player */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; overflow-y: auto; }
-        .modal-content { width: 90%; max-width: 1000px; margin: 50px auto; background: #141414; border-radius: 15px; overflow: hidden; }
+        /* Modal Player & Details */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 1000px;
+            margin: 50px auto;
+            background: #141414;
+            border-radius: 15px;
+            position: relative;
+        }
+
         iframe { width: 100%; aspect-ratio: 16/9; border: none; }
-        .details-section { padding: 25px; text-align: right; }
-        .related-section { padding: 20px; background: #000; }
-        .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
-        .close-btn { position: absolute; top: 10px; right: 20px; background: var(--accent); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; z-index: 2001; }
 
-        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; } }
+        .details-box { padding: 25px; text-align: right; }
+        .related-box { padding: 20px; background: #0b0c10; border-top: 1px solid #333; }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .close-btn {
+            position: absolute;
+            top: -45px; right: 0;
+            background: var(--accent);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .container { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .logo { font-size: 25px; }
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">MOVIES4U</div>
-    <input type="text" id="search" class="search-box" onkeyup="render()" placeholder="ناڤێ فیلمی بنڤیسە...">
+    <div class="logo">Movies<span>4U</span></div>
+    <input type="text" id="searchInp" class="search-box" onkeyup="render()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
 </header>
 
 <div class="container" id="movieList"></div>
 
 <div id="videoModal" class="modal">
-    <button class="close-btn" onclick="closeVideo()">✕ داخستن</button>
     <div class="modal-content">
+        <button class="close-btn" onclick="closeVideo()">✕ داخستن</button>
         <iframe id="videoFrame" src="" allowfullscreen></iframe>
-        <div class="details-section">
-            <h2 id="mTitle" style="color:var(--accent); margin:0;"></h2>
-            <p id="mMeta" style="color:#888;"></p>
-            <p id="mDesc" style="line-height:1.6;"></p>
+        <div class="details-box">
+            <h2 id="mTitle" style="color: var(--accent); margin: 0;"></h2>
+            <p id="mMeta" style="color: #888; margin: 10px 0;"></p>
+            <p id="mDesc" style="line-height: 1.6; font-size: 16px;"></p>
         </div>
-        <div class="related-section">
-            <h3 style="border-right: 3px solid var(--accent); padding-right: 10px;">فیلمێن نێزیک</h3>
-            <div id="relatedMovies" class="related-grid"></div>
+        <div class="related-box">
+            <h3 style="border-right: 4px solid var(--accent); padding-right: 10px;">فیلمێن نێزیک</h3>
+            <div id="relatedGrid" class="related-grid"></div>
         </div>
     </div>
 </div>
 
 <script>
     const movies = [
-        { id: 0, title: "Interstellar", cat: "Drama", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن رەش دا بۆ قورتالکرنا مرۆڤایەتیێ." },
-        { id: 1, title: "John Wick", cat: "Action", year: "2014", rate: "7.4", poster: "https://m.media-amazon.com/images/M/MV5BMTU2NjA1ODgzMF5BMl5BanBnXkFtZTgwMTM2MTI4MjE@._V1_.jpg", link: "https://www.youtube.com/embed/2AUmvWm5P2I", desc: "بکوژەکێ پیشەگەر ڤەدگەریتە سەر کارێ خۆ پشتی هندێ هندەک کەسان هەر تشتێ وی هەین ژێ ستاندین." },
-        { id: 2, title: "The Dark Knight", cat: "Action", year: "2008", rate: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی مەزنترین دوژمنێ خۆ دبیتەوە کو ئەوژی جۆکەرە." },
-        { id: 3, title: "Avatar", cat: "Action", year: "2009", rate: "7.9", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlYTctMzU0NS00YzhjLWFhN2ItY2EzM2UxYjc0Y2JlXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg", link: "https://www.youtube.com/embed/5PSNL1qE6VY", desc: "گەشتەک بۆ جیهانا پاندۆرا و شەر دناڤبەرا مروڤان و نەتەوەیێ ناڤی." }
+        { id: 0, title: "Interstellar", cat: "زانستی", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن ڕەش دا بۆ قورتالکرنا مرۆڤایەتیێ پشتی زەوی تووشی قەیرانەکا مەزن دبیت." },
+        { id: 1, title: "The Dark Knight", cat: "ئەکشن", year: "2008", rate: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی مەزنترین دوژمنێ خۆ دبیتەوە کو ئەوژی جۆکەرە، یێ کو هەوڵ ددەت باژێڕێ گۆتام بەرەو وێرانبوونێ ببەت." },
+        { id: 2, title: "The Lion King", cat: "ئەنیمەیشن", year: "1994", rate: "8.5", poster: "https://m.media-amazon.com/images/M/MV5BYTYxNGMyZTYtMjE3MS00MzNjLWFjNmYtMDk3N2FmM2JiM2M1XkEyXkFqcGdeQXVyNjY5NDU4NzI@._V1_.jpg", link: "https://www.youtube.com/embed/lFzVJEksoDY", desc: "چیرۆکا شێرەکی گەنج بناڤێ سیمبا کو پشتی مرنا بابێ خۆ دهێتە دوورخستن، پاشان دزڤریتەڤە بۆ وەرگرتنا تەختی." },
+        { id: 3, title: "Inception", cat: "زانستی", year: "2010", rate: "8.8", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0", desc: "دزەکێ بلیمەت د ناڤ خەونێن خەلکی دا نهێنیان ددزیت، بەلێ ئەڤ جارە ئەرکێ وی چاندنا بیرۆکەیەکە نەک دزینا وێ." },
+        { id: 4, title: "Joker", cat: "دراما", year: "2019", rate: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا ئارتەر فلێک، کۆمیدیانەکێ شکەستی کو ل ژێر فشارێن جڤاکی دا بەرەو شێتی و تاوانێ دچیت." },
+        { id: 5, title: "Spider-Man", cat: "ئەکشن", year: "2021", rate: "8.2", poster: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg", link: "https://www.youtube.com/embed/JfVOs4VSpmA", desc: "پشتی ناسنامەیا وی دهێتە ئاشکراکرن، پیتەر پارکەر داخوازا هاریکاریێ ژ دکتۆر سترەینج دکەت، بەلێ تشت ئالۆز دبن." }
     ];
 
     function render() {
         const list = document.getElementById('movieList');
-        const search = document.getElementById('search').value.toLowerCase();
+        const search = document.getElementById('searchInp').value.toLowerCase();
         list.innerHTML = '';
+
         movies.filter(m => m.title.toLowerCase().includes(search)).forEach(m => {
             list.innerHTML += `
                 <div class="movie-card" onclick="openVideo(${m.id})">
+                    <span class="rating-tag">⭐ ${m.rate}</span>
                     <img src="${m.poster}" class="poster">
                     <div class="info">
                         <h3>${m.title}</h3>
-                        <p>${m.year} | ⭐ ${m.rate}</p>
-                        <button class="watch-btn">▶ تەماشە بکە</button>
+                        <p>${m.year} • ${m.cat}</p>
                     </div>
                 </div>`;
         });
@@ -89,20 +200,20 @@
         document.getElementById('mTitle').innerText = m.title;
         document.getElementById('mMeta').innerText = `${m.year} • ${m.cat} • ⭐ ${m.rate}`;
         document.getElementById('mDesc').innerText = m.desc;
-        
-        // Related Movies logic
-        const related = document.getElementById('relatedMovies');
-        related.innerHTML = '';
+
+        // Related logic
+        const relatedGrid = document.getElementById('relatedGrid');
+        relatedGrid.innerHTML = '';
         movies.filter(x => x.cat === m.cat && x.id !== m.id).forEach(r => {
-            related.innerHTML += `
+            relatedGrid.innerHTML += `
                 <div onclick="openVideo(${r.id})" style="cursor:pointer; text-align:center;">
-                    <img src="${r.poster}" style="width:100%; border-radius:5px; height:180px; object-fit:cover;">
+                    <img src="${r.poster}" style="width:100%; border-radius:10px; height:180px; object-fit:cover; border:1px solid #333;">
                     <p style="font-size:12px; margin-top:5px;">${r.title}</p>
                 </div>`;
         });
 
         document.getElementById('videoModal').style.display = 'block';
-        window.scrollTo(0, 0);
+        document.getElementById('videoModal').scrollTo(0,0);
     }
 
     function closeVideo() {
