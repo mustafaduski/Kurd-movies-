@@ -3,15 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | فیلم و زنجیرە</title>
+    <title>Movies4U | ئەندامیەت و سینەما</title>
     <style>
-        :root { 
-            --accent: #ffcc00; 
-            --bg: #0b0c10; 
-            --card-bg: #1f2833; 
-            --text: #ffffff; 
-        }
-
+        :root { --accent: #ffcc00; --bg: #0b0c10; --card-bg: #1f2833; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
 
         /* Navigation */
@@ -19,118 +13,112 @@
             display: flex; justify-content: space-between; align-items: center; 
             padding: 15px 5%; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000;
         }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; font-weight: bold; }
-        .nav-links button.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        .user-zone { display: flex; align-items: center; gap: 15px; }
+        .login-btn { background: var(--accent); color: black; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
 
-        /* Tabs Selection (Movies vs Shows) */
-        .tab-bar { display: flex; justify-content: center; gap: 30px; padding: 20px; background: #111; }
-        .tab-item { cursor: pointer; font-size: 20px; opacity: 0.6; transition: 0.3s; }
-        .tab-item.active { opacity: 1; color: var(--accent); border-bottom: 3px solid var(--accent); }
-
-        /* Grid Layout */
-        .container { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 25px; padding: 40px 5%; 
-        }
-
-        .card { 
-            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
-            transition: 0.4s; position: relative; cursor: pointer;
-        }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .poster { width: 100%; height: 300px; object-fit: cover; }
-        .badge { position: absolute; top: 10px; right: 10px; background: var(--accent); color: black; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 12px; }
-
-        /* Modal Player */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; overflow-y: auto; }
-        .modal-content { width: 90%; max-width: 1000px; margin: 50px auto; background: #000; border-radius: 20px; }
-        .close-btn { float: left; padding: 15px; color: white; cursor: pointer; font-size: 24px; }
-
-        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; } }
+        /* Login Modal */
+        .auth-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; }
+        .auth-form { width: 300px; background: #111; margin: 100px auto; padding: 30px; border-radius: 15px; text-align: center; border: 1px solid var(--accent); }
+        .auth-form input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; outline: none; }
+        
+        /* Grid */
+        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; padding: 40px 5%; filter: blur(0px); transition: 0.5s; }
+        .locked { filter: blur(10px); pointer-events: none; }
+        
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.4s; cursor: pointer; position: relative; }
+        .poster { width: 100%; height: 280px; object-fit: cover; }
+        
+        /* Lock Overlay */
+        .lock-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 500; text-align: center; display: none; }
     </style>
 </head>
 <body>
 
 <nav>
     <div style="font-size: 24px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
-    <div class="nav-links">
-        <input type="text" id="searchInp" onkeyup="render()" placeholder="لێگەڕیان..." style="padding: 5px 10px; border-radius: 15px; border: none;">
+    <div class="user-zone" id="userZone">
+        <button class="login-btn" onclick="toggleAuthModal(true)">چوونەژوورێ</button>
     </div>
 </nav>
 
-<div class="tab-bar">
-    <div class="tab-item active" id="btnMovies" onclick="changeTab('movie')">🎬 فیلم</div>
-    <div class="tab-item" id="btnShows" onclick="changeTab('show')">📺 زنجیرە</div>
+<div class="lock-msg" id="lockMsg">
+    <h1 style="font-size: 40px;">🔒 هێشتا یا قفلە</h1>
+    <p>بۆ دیتنا فیلم و زنجیرەیان، تکایە بچۆ د ژوورڤە</p>
+    <button class="login-btn" onclick="toggleAuthModal(true)">نوکە بچۆ د ژوورڤە</button>
 </div>
 
-<div class="container" id="mainGrid"></div>
+<div class="container" id="mainGrid">
+    </div>
 
-<div id="playerModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closePlayer()">✕</span>
-        <iframe id="videoIframe" width="100%" height="500px" src="" frameborder="0" allowfullscreen></iframe>
-        <div style="padding: 30px;">
-            <h1 id="mTitle" style="color: var(--accent);"></h1>
-            <p id="mDesc" style="line-height: 1.6;"></p>
-        </div>
+<div id="authModal" class="auth-modal">
+    <div class="auth-form">
+        <h2 style="color: var(--accent);">بخێرهاتی</h2>
+        <input type="text" id="userName" placeholder="ناڤێ تە">
+        <input type="password" placeholder="کۆد (Password)">
+        <button class="login-btn" style="width: 100%;" onclick="login()">چوونەژوورێ</button>
+        <p style="font-size: 12px; margin-top: 15px; cursor: pointer;" onclick="toggleAuthModal(false)">پاشگەزبوونەوە</p>
     </div>
 </div>
 
 <script>
-    const content = [
-        // --- MOVIES ---
-        { id: 0, type: 'movie', title: "Interstellar", year: "2014", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا پڕی مەترسی دناڤ کونێن ڕەش دا." },
-        { id: 1, type: 'movie', title: "The Dark Knight", year: "2008", rate: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی جۆکەری دبیتەڤە." },
-        
-        // --- TV SHOWS ---
-        { id: 2, type: 'show', title: "Breaking Bad", year: "2008-2013", rate: "9.5", poster: "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTUtMzQ3NzQ4NmOtM2Q2XkEyXkFqcGdeQXVyMzE4MDkyNTA@._V1_.jpg", link: "https://www.youtube.com/embed/HhesaQXLuRY", desc: "مامۆستایەکی کیمیا دەست دەکات بە دروستکردنی ماددەی بێهۆشکەر." },
-        { id: 3, type: 'show', title: "Game of Thrones", year: "2011-2019", rate: "9.2", poster: "https://m.media-amazon.com/images/M/MV5BN2IzYzBiOTMtNGIwMi00MWVjLTk5NzMtZmUwZGEzN2VlYzMyXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg", link: "https://www.youtube.com/embed/KPLWWIOcool", desc: "جەنگ ل سەر تەختێ پاشایەتیێ دناڤبەرا خێزانێن مەزن." },
-        { id: 4, type: 'show', title: "Stranger Things", year: "2016-", rate: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BMDZkYmVhNjMtNWU4MC00MDQxLWE3MjYtZGJlZTM0YjM4ZDBmXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/b9EkMc79ZSU", desc: "کۆمەڵە منداڵێک ڕووبەڕووی تشتێن سەیر دەبنەوە." }
+    let isLoggedIn = false;
+
+    const movies = [
+        { id: 1, title: "Breaking Bad", poster: "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTUtMzQ3NzQ4NmOtM2Q2XkEyXkFqcGdeQXVyMzE4MDkyNTA@._V1_.jpg" },
+        { id: 2, title: "Interstellar", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" },
+        { id: 3, title: "Joker", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg" }
     ];
 
-    let currentTab = 'movie';
-
-    function changeTab(type) {
-        currentTab = type;
-        document.getElementById('btnMovies').classList.toggle('active', type === 'movie');
-        document.getElementById('btnShows').classList.toggle('active', type === 'show');
-        render();
+    function toggleAuthModal(show) {
+        document.getElementById('authModal').style.display = show ? 'block' : 'none';
     }
 
-    function render() {
+    function login() {
+        const name = document.getElementById('userName').value;
+        if(name.trim() === "") return alert("تکایە ناڤێ خۆ بنڤیسە");
+        
+        isLoggedIn = true;
+        localStorage.setItem('user', name);
+        toggleAuthModal(false);
+        checkStatus();
+    }
+
+    function logout() {
+        isLoggedIn = false;
+        localStorage.removeItem('user');
+        checkStatus();
+    }
+
+    function checkStatus() {
+        const user = localStorage.getItem('user');
         const grid = document.getElementById('mainGrid');
-        const search = document.getElementById('searchInp').value.toLowerCase();
-        grid.innerHTML = '';
+        const lockMsg = document.getElementById('lockMsg');
+        const userZone = document.getElementById('userZone');
 
-        content.filter(item => item.type === currentTab && item.title.toLowerCase().includes(search)).forEach(item => {
-            grid.innerHTML += `
-                <div class="card" onclick="openPlayer(${item.id})">
-                    <span class="badge">⭐ ${item.rate}</span>
-                    <img src="${item.poster}" class="poster">
-                    <div style="padding:10px; text-align:center;">
-                        <h3 style="margin:5px 0; font-size:16px;">${item.title}</h3>
-                        <p style="font-size:12px; color:#888;">${item.year}</p>
-                    </div>
-                </div>`;
-        });
+        if(user) {
+            grid.classList.remove('locked');
+            lockMsg.style.display = 'none';
+            userZone.innerHTML = `<span>بخێرهاتی، <b>${user}</b></span> <button class="login-btn" style="background:#ff4757" onclick="logout()">دەرکەفتن</button>`;
+            renderMovies();
+        } else {
+            grid.classList.add('locked');
+            lockMsg.style.display = 'block';
+            userZone.innerHTML = `<button class="login-btn" onclick="toggleAuthModal(true)">چوونەژوورێ</button>`;
+            renderMovies(); // نیشاندان ب شێوازێ فلو (Blur)
+        }
     }
 
-    function openPlayer(id) {
-        const item = content.find(x => x.id === id);
-        document.getElementById('videoIframe').src = item.link;
-        document.getElementById('mTitle').innerText = item.title;
-        document.getElementById('mDesc').innerText = item.desc;
-        document.getElementById('playerModal').style.display = 'block';
+    function renderMovies() {
+        const grid = document.getElementById('mainGrid');
+        grid.innerHTML = movies.map(m => `
+            <div class="card">
+                <img src="${m.poster}" class="poster">
+                <div style="padding:10px; text-align:center;"><h3>${m.title}</h3></div>
+            </div>
+        `).join('');
     }
 
-    function closePlayer() {
-        document.getElementById('playerModal').style.display = 'none';
-        document.getElementById('videoIframe').src = '';
-    }
-
-    // Initial Render
-    render();
+    checkStatus();
 </script>
 </body>
 </html>
