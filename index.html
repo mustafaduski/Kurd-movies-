@@ -3,202 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurdi Cinema | سینەما ب کوردی</title>
+    <title>Movies4U Kurdish | سینەما ب کوردی</title>
     <style>
+        /* ستایلێ گشتی یێ هاوشێوەی Movies4U */
         :root {
-            --main-color: #e50914;
-            --bg-color: #141414;
-            --card-bg: #2f2f2f;
+            --primary-color: #ffcc00; /* رەنگێ زەرا تایبەت ب Movies4U */
+            --bg-body: #0f1014;
+            --bg-card: #1a1d24;
+            --text-color: #ffffff;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: white;
+            background-color: var(--bg-body);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
         }
 
-        /* هێدەر و گەرۆک */
-        header {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(20,20,20,0) 100%);
-            padding: 20px 5%;
+        /* Navbar و Search */
+        nav {
+            background-color: #000;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
             position: sticky;
             top: 0;
             z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
-        header h1 {
-            color: var(--main-color);
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-transform: uppercase;
         }
 
-        /* باکسا لێگەریانێ */
         .search-box {
-            width: 100%;
-            max-width: 500px;
             position: relative;
+            width: 40%;
         }
 
         #searchInput {
             width: 100%;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 10px 15px;
+            border-radius: 5px;
             border: 1px solid #444;
-            background: rgba(0,0,0,0.7);
+            background: #252830;
             color: white;
-            font-size: 16px;
             outline: none;
-            transition: 0.3s;
         }
 
         #searchInput:focus {
-            border-color: var(--main-color);
-            background: rgba(0,0,0,0.9);
+            border-color: var(--primary-color);
         }
 
         /* بەشێ فیلمـان */
         .container {
+            padding: 30px 5%;
+        }
+
+        .section-title {
+            border-right: 4px solid var(--primary-color);
+            padding-right: 15px;
+            margin-bottom: 25px;
+            font-size: 20px;
+        }
+
+        .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-            padding: 40px 5%;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
         }
 
         .movie-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
+            background-color: var(--bg-card);
+            border-radius: 8px;
             overflow: hidden;
-            transition: transform 0.4s ease;
-            cursor: pointer;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
+            cursor: pointer;
+            border: 1px solid #2a2e38;
         }
 
         .movie-card:hover {
-            transform: translateY(-10px) scale(1.03);
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
         }
 
-        .movie-card img {
+        /* وێنێ فیلمی */
+        .poster-wrapper {
+            position: relative;
+            height: 260px;
+        }
+
+        .poster-wrapper img {
             width: 100%;
-            height: 320px;
+            height: 100%;
             object-fit: cover;
         }
 
-        .movie-info {
-            padding: 15px;
-        }
-
-        .movie-info h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-        }
-
-        .movie-info p {
-            font-size: 0.85rem;
-            color: #bbb;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        .watch-btn {
-            display: block;
-            background-color: var(--main-color);
-            color: white;
-            text-align: center;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 5px;
+        .rating {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: var(--primary-color);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: bold;
-            transition: 0.3s;
         }
 
-        .watch-btn:hover {
-            background-color: #b20710;
+        /* ناڤ و پیزانی */
+        .movie-detail {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .movie-detail h3 {
+            margin: 0;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-year {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            display: block;
         }
 
         .hidden { display: none; }
 
         /* موبایل */
-        @media (max-width: 600px) {
-            .container { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-            .movie-card img { height: 230px; }
+        @media (max-width: 768px) {
+            .search-box { width: 60%; }
+            .movie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>KURD CINEMA</h1>
+<nav>
+    <div class="logo">MOVIES<span>4U</span></div>
     <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterMovies()" placeholder="ل ناڤێ فیلمی بگەڕێ (لێرە بنووسە)...">
+        <input type="text" id="searchInput" onkeyup="searchMovie()" placeholder="ل ناڤێ فیلمی بگەڕێ...">
     </div>
-</header>
+</nav>
 
-<div class="container" id="movieList">
+<div class="container">
+    <h2 class="section-title">دووماهیک فیلمێن هاتینە زێدەکرن</h2>
     
-    <div class="movie-card">
-        <img src="https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt="Interstellar">
-        <div class="movie-info">
-            <h3 class="title">Interstellar</h3>
-            <p>گەشتەکا پڕی جادووی بۆ ناڤ گەردوون و کونیێن رەش بۆ قورتالکرنا مروڤایەتیێ.</p>
-            <a href="https://www.youtube.com/results?search_query=Interstellar+trailer" target="_blank" class="watch-btn">تەماشە بکە</a>
+    <div class="movie-grid" id="movieList">
+        
+        <div class="movie-card" onclick="location.href='#'">
+            <div class="poster-wrapper">
+                <span class="rating">8.8</span>
+                <img src="https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg" alt="Inception">
+            </div>
+            <div class="movie-detail">
+                <h3 class="title">Inception</h3>
+                <span class="movie-year">2010 • ئەکشن</span>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <img src="https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg" alt="Joker">
-        <div class="movie-info">
-            <h3 class="title">Joker</h3>
-            <p>چیرۆکا سەرەلدانا دوژمنێ باتمانی و نەخۆشیێن دەروونی یێن جۆکەری.</p>
-            <a href="https://www.youtube.com/results?search_query=Joker+trailer" target="_blank" class="watch-btn">تەماشە بکە</a>
+        <div class="movie-card" onclick="location.href='#'">
+            <div class="poster-wrapper">
+                <span class="rating">9.0</span>
+                <img src="https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg" alt="The Dark Knight">
+            </div>
+            <div class="movie-detail">
+                <h3 class="title">The Dark Knight</h3>
+                <span class="movie-year">2008 • دراما</span>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <img src="https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2UxY2MzZmCxXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg" alt="Oppenheimer">
-        <div class="movie-info">
-            <h3 class="title">Oppenheimer</h3>
-            <p>چیرۆکا زانایێ ئەمریکی و دروستکرنا ئێکەم بۆمبا ئەتۆمی د جیهانێ دا.</p>
-            <a href="#" class="watch-btn">تەماشە بکە</a>
+        <div class="movie-card" onclick="location.href='#'">
+            <div class="poster-wrapper">
+                <span class="rating">7.9</span>
+                <img src="https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg" alt="John Wick">
+            </div>
+            <div class="movie-detail">
+                <h3 class="title">John Wick</h3>
+                <span class="movie-year">2014 • ئەکشن</span>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <img src="https://m.media-amazon.com/images/M/MV5BYjhiNjBlYTctMzU0NS00YzhjLWFhN2ItY2EzM2UxYjc0Y2JlXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg" alt="Avatar">
-        <div class="movie-info">
-            <h3 class="title">Avatar</h3>
-            <p>شەرەکێ مەزن ل سەر هەسارەیا پاندۆرا دناڤبەرا مرۆڤان و نەتەوێ ناڤی دا.</p>
-            <a href="#" class="watch-btn">تەماشە بکە</a>
+        <div class="movie-card" onclick="location.href='#'">
+            <div class="poster-wrapper">
+                <span class="rating">8.1</span>
+                <img src="https://m.media-amazon.com/images/M/MV5BNGVjN3RkNTktMjZlRC00YTcyLThjNjUtMjcxMTBkMGZkGvV1_FMjpg_UX1000_.jpg" alt="Deadpool">
+            </div>
+            <div class="movie-detail">
+                <h3 class="title">Deadpool</h3>
+                <span class="movie-year">2016 • کۆمیدی</span>
+            </div>
         </div>
-    </div>
 
-    <div class="movie-card">
-        <img src="https://m.media-amazon.com/images/M/MV5BMGZlNTY1ZWUtYTMzNC00ZjUyLWE0MjQtMTMxN2E3ODYxMWVmXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg" alt="Spider-Man">
-        <div class="movie-info">
-            <h3 class="title">Spider-Man</h3>
-            <p>گەنجەک دهێتە پێڤەدان ژ لایێ عەنکەبوتەکێ و شیانێن سەیر ل دەف دروست دبن.</p>
-            <a href="#" class="watch-btn">تەماشە بکە</a>
-        </div>
     </div>
-
 </div>
 
 <script>
-    function filterMovies() {
+    function searchMovie() {
         let input = document.getElementById('searchInput').value.toLowerCase();
         let cards = document.getElementsByClassName('movie-card');
         
         for (let i = 0; i < cards.length; i++) {
             let title = cards[i].querySelector('.title').innerText.toLowerCase();
-            let description = cards[i].querySelector('p').innerText.toLowerCase();
-            
-            if (title.includes(input) || description.includes(input)) {
+            if (title.includes(input)) {
                 cards[i].classList.remove('hidden');
             } else {
                 cards[i].classList.add('hidden');
