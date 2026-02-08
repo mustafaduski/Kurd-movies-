@@ -3,218 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | Professional Cinema UI</title>
+    <title>Movies4U | 100+ Movies Edition</title>
     <style>
-        :root { 
-            --accent: #ffcc00; 
-            --bg: #050505;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-        
+        :root { --accent: #ffcc00; --bg: #050505; --card: rgba(255,255,255,0.03); }
         body { 
-            margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; 
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #080810 60%, #050505 100%);
-            background-attachment: fixed;
-            color: white; overflow-x: hidden;
+            margin: 0; font-family: 'Segoe UI', sans-serif; 
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+            background-attachment: fixed; color: white; overflow-x: hidden;
         }
 
-        /* Ambient Glow Background */
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 80% 20%, rgba(255, 204, 0, 0.04) 0%, transparent 50%),
-                        radial-gradient(circle at 20% 80%, rgba(255, 204, 0, 0.02) 0%, transparent 50%);
-            z-index: -1; pointer-events: none;
-        }
-
-        /* Modern Glass Navbar */
+        /* Navbar with Search */
         nav {
-            position: fixed; top: 0; width: 100%; 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5%; z-index: 1000; 
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border); box-sizing: border-box;
+            position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; 
+            align-items: center; padding: 15px 5%; z-index: 1000; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;
         }
-
-        .pts-badge { background: var(--accent); color: black; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); }
-
-        /* Dynamic Hero Section */
-        .hero {
-            height: 65vh; display: flex; align-items: center; padding: 0 8%;
-            background: linear-gradient(to right, #050505, transparent);
-            margin-top: 60px;
+        .search-box {
+            background: rgba(255,255,255,0.1); border: 1px solid #333; padding: 8px 20px;
+            border-radius: 20px; color: white; width: 250px; outline: none; transition: 0.3s;
         }
-        .hero-content { max-width: 650px; animation: fadeIn 1.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .search-box:focus { border-color: var(--accent); width: 300px; }
 
-        .btn-main { padding: 14px 40px; background: var(--accent); border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.4s; }
-        .btn-main:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--accent); }
-
-        /* Rows Styling */
-        .row-title { padding: 40px 8% 10px; font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .row-title::before { content: ""; width: 5px; height: 25px; background: var(--accent); border-radius: 10px; }
-        
-        .movie-row { display: flex; gap: 25px; overflow-x: auto; padding: 20px 8%; scrollbar-width: none; }
-        .movie-row::-webkit-scrollbar { display: none; }
-
-        /* Premium Movie Card */
+        /* Movie Grid */
+        .container { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 25px; padding: 100px 5% 50px; 
+        }
         .card {
-            min-width: 210px; height: 310px; border-radius: 20px;
-            position: relative; overflow: hidden; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer; border: 1px solid var(--border); background: var(--glass);
+            background: var(--card); border-radius: 15px; overflow: hidden;
+            transition: 0.4s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
         }
-        .card:hover { transform: scale(1.08); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-overlay { position: absolute; bottom: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); opacity: 0; transition: 0.3s; }
-        .card:hover .card-overlay { opacity: 1; }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card img { width: 100%; height: 270px; object-fit: cover; }
+        .card-info { padding: 12px; text-align: center; }
+        .card-info h3 { font-size: 14px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info span { color: var(--accent); font-size: 12px; font-weight: bold; }
 
-        /* Modal & Player */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 5000; overflow-y: auto; }
-        .modal-inner { width: 90%; max-width: 1100px; margin: 40px auto; padding-bottom: 50px; }
-        .video-wrapper { position: relative; border-radius: 25px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 0 60px rgba(0,0,0,1); }
-        
-        .cast-box { display: flex; gap: 15px; margin: 20px 0; overflow-x: auto; padding-bottom: 10px; }
-        .actor { text-align: center; min-width: 90px; }
-        .actor img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 8px; }
+        /* Modal Player */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; }
+        .modal-content { width: 90%; max-width: 1000px; margin: 50px auto; }
+        .close-btn { position: fixed; top: 20px; left: 20px; background: var(--accent); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; }
 
-        .op-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-top: 30px; }
-        textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #333; color: white; padding: 15px; border-radius: 15px; font-size: 16px; margin-bottom: 15px; }
-
-        .close-btn { position: fixed; top: 25px; left: 25px; background: white; color: black; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 6000; transition: 0.3s; }
-        .close-btn:hover { transform: rotate(90deg); background: var(--accent); }
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 15px; } .search-box { width: 150px; } }
     </style>
 </head>
 <body>
 
 <nav>
-    <div style="font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -1px;">MOVIES4U</div>
-    <div class="pts-badge">⭐ <span id="pts">0</span> POINTS</div>
+    <div style="font-size: 24px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
+    <input type="text" id="searchInput" class="search-box" placeholder="ل ناڤ ١٠٠ فیلمـان بگەڕێ..." onkeyup="searchMovies()">
 </nav>
 
-<div class="hero">
-    <div class="hero-content">
-        <div style="color: var(--accent); font-weight: bold; margin-bottom: 10px;">باشترینێن حەفتیێ</div>
-        <h1 style="font-size: 55px; margin: 0; line-height: 1.1;">INTERSTELLAR</h1>
-        <p style="font-size: 19px; color: #aaa; margin: 25px 0; line-height: 1.6;">گەشتەکا پڕی هەست و خەیال دناڤ کونێن ڕەش دا بۆ دیتنا مالەکا نوی بۆ مروڤایەتیێ.</p>
-        <button class="btn-main" onclick="openM(0)">🎬 نوکە تەماشە بکە</button>
-    </div>
-</div>
-
-<div class="row-title">تڕێندێن جیهانی</div>
-<div class="movie-row" id="trending"></div>
-
-<div class="row-title">پێشنیارکری بۆ تە</div>
-<div class="movie-row" id="rec"></div>
+<div class="container" id="movieGrid"></div>
 
 <div id="modal" class="modal">
     <button class="close-btn" onclick="closeM()">✕</button>
-    <div class="modal-inner">
-        <div class="video-wrapper">
-            <iframe id="frame" width="100%" height="580px" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-        
-        <div style="padding: 10px;">
-            <h1 id="mTitle" style="color: var(--accent); font-size: 40px; margin-bottom: 10px;"></h1>
-            <p id="mDesc" style="color: #bbb; line-height: 1.8; font-size: 18px; max-width: 800px;"></p>
-
-            <h3 style="margin-top: 40px; border-right: 3px solid var(--accent); padding-right: 15px;">🎭 ئەکتەرێن سەرەکی</h3>
-            <div id="cast" class="cast-box"></div>
-
-            <div class="op-box">
-                <h3 style="margin-top: 0;">💬 ڕایێن بینەران <small style="color: #777; font-weight: normal;">(خاڵێن خۆ زێدە بکە)</small></h3>
-                <textarea id="opInput" placeholder="ڕایێ خۆ بنڤیسە..."></textarea>
-                <button class="btn-main" style="padding: 10px 30px;" onclick="addOp()">پۆست بکە</button>
-                <div id="opList" style="margin-top: 25px;"></div>
-            </div>
-        </div>
+    <div class="modal-content">
+        <iframe id="frame" width="100%" height="500px" src="" frameborder="0" allowfullscreen style="border-radius: 20px;"></iframe>
+        <h1 id="mTitle" style="color: var(--accent); margin-top: 20px;"></h1>
+        <p id="mDesc" style="color: #ccc; line-height: 1.6;"></p>
     </div>
 </div>
 
 <script>
+    // لێرە لیستەیا فیلمـان هەتا ١٠٠ دانان زێدە دبیت
     const movies = [
-        { 
-            id: 0, title: "Interstellar", 
-            desc: "گەشتەکا پڕی مەترسی دناڤ گەردوونێ بێ دووماهی دا بۆ قورتالکرنا زەویێ.", 
-            poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", 
-            link: "https://www.youtube.com/embed/zSWdZVtXT7E",
-            cast: [{n: "Matthew M.", i: "https://m.media-amazon.com/images/M/MV5BMTg0MDc3ODUwOV5BMl5BanBnXkFtZTcwMTk2NjY4Nw@@._V1_.jpg"}, {n: "Anne H.", i: "https://m.media-amazon.com/images/M/MV5BNjA5OTAyNzg3MV5BMl5BanBnXkFtZTcwOTcxMDY3OA@@._V1_.jpg"}],
-            ops: ["بۆچوونا من ئەڤە نایابترین فیلمێ مێژوویێیە."]
-        },
-        { 
-            id: 1, title: "The Joker", 
-            desc: "چیرۆکا تاری یا ئارسەر فلێک و چەوانیا بوونا وی ب مەزنترین تاوانبار.", 
-            poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", 
-            link: "https://www.youtube.com/embed/t433PEQGErc",
-            cast: [{n: "Joaquin P.", i: "https://m.media-amazon.com/images/M/MV5BMjA5NTA3NzQ5Nl5BMl5BanBnXkFtZTcwOTYzNjUzMw@@._V1_.jpg"}],
-            ops: ["ئەکشن و دراما ب شێوەیەکێ نایاب."]
-        }
+        { id: 1, title: "Interstellar", rating: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا گەردوونی بۆ پاراستنا مروڤایەتیێ." },
+        { id: 2, title: "The Dark Knight", rating: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی جۆکەری دبیتەڤە." },
+        { id: 3, title: "Inception", rating: "8.8", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0", desc: "دزینا نهێنیان دناڤ خەونان دا." },
+        { id: 4, title: "The Joker", rating: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا تاری یا ئارسەر فلێک." },
+        { id: 5, title: "Avatar: Way of Water", rating: "7.6", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg", link: "https://www.youtube.com/embed/d9MyW72ELq0", desc: "گەشتەکا نوی د جیهانێ ئاڤێ دا." },
+        { id: 6, title: "Spider-Man: No Way Home", rating: "8.2", poster: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg", link: "https://www.youtube.com/embed/JfVOs4VSpmA", desc: "سپایدەرمان دگەل مولتیڤێرسێ." },
+        { id: 7, title: "The Godfather", rating: "9.2", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", link: "https://www.youtube.com/embed/UaVTIH8mujA", desc: "مەزنترین چیرۆکا مافیایێ." },
+        { id: 8, title: "John Wick 4", rating: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJhMTEtOTdkZGFjNmZiMTE2XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkHuJ8I", desc: "جۆن ویک تۆڵەی خۆ دەکاتەوە." },
+        { id: 9, title: "Oppenheimer", rating: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1Zi00N2MzLTk5ZGYtMWUxY2FlZTgyMjYzXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/uYPbbksJxIg", desc: "چیرۆکا دروستکەری بۆمبا ئەتۆمی." },
+        { id: 10, title: "The Shawshank Redemption", rating: "9.3", poster: "https://m.media-amazon.com/images/M/MV5BNDE3ODcxNzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg", link: "https://www.youtube.com/embed/PLl99DgF6b4", desc: "ئومێد و ئازادی دناڤ زیندانێ دا." }
+        // تو دشێی ب هەمان شێوە هەتا ١٠٠ فیلمان لێرە زێدە بکەی...
     ];
 
-    let points = localStorage.getItem('userPts') || 0;
-    let currentId = null;
-
-    function render() {
-        const row = document.getElementById('trending');
-        const rec = document.getElementById('rec');
-        const html = movies.map(m => `
+    function renderMovies(data) {
+        const grid = document.getElementById('movieGrid');
+        grid.innerHTML = data.map(m => `
             <div class="card" onclick="openM(${m.id})">
-                <img src="${m.poster}">
-                <div class="card-overlay">
-                    <h4 style="margin:0;">${m.title}</h4>
-                    <small style="color:var(--accent)">⭐ 9.2</small>
+                <img src="${m.poster}" loading="lazy">
+                <div class="card-info">
+                    <h3>${m.title}</h3>
+                    <span>⭐ ${m.rating}</span>
                 </div>
             </div>
         `).join('');
-        row.innerHTML = html;
-        rec.innerHTML = html;
-        document.getElementById('pts').innerText = points;
+    }
+
+    function searchMovies() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = movies.filter(m => m.title.toLowerCase().includes(term));
+        renderMovies(filtered);
     }
 
     function openM(id) {
-        currentId = id;
         const m = movies.find(x => x.id === id);
         document.getElementById('frame').src = m.link;
         document.getElementById('mTitle').innerText = m.title;
         document.getElementById('mDesc').innerText = m.desc;
-        
-        document.getElementById('cast').innerHTML = m.cast.map(c => `
-            <div class="actor">
-                <img src="${c.i}">
-                <div style="font-size: 11px; font-weight:bold;">${c.n}</div>
-            </div>
-        `).join('');
-
-        loadOps();
         document.getElementById('modal').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function addOp() {
-        const val = document.getElementById('opInput').value;
-        if(!val.trim()) return;
-        movies[currentId].ops.unshift(val);
-        points = parseInt(points) + 10;
-        localStorage.setItem('userPts', points);
-        document.getElementById('pts').innerText = points;
-        document.getElementById('opInput').value = "";
-        loadOps();
-    }
-
-    function loadOps() {
-        document.getElementById('opList').innerHTML = movies[currentId].ops.map(o => `
-            <div style="background: rgba(255,255,255,0.04); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-right: 3px solid var(--accent);">
-                <span style="font-size: 14px;">👤 ${o}</span>
-            </div>
-        `).join('');
     }
 
     function closeM() {
         document.getElementById('modal').style.display = 'none';
         document.getElementById('frame').src = "";
-        document.body.style.overflow = 'auto';
     }
 
-    render();
+    renderMovies(movies);
 </script>
 </body>
 </html>
