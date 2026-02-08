@@ -3,103 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies4U | Stable Version</title>
+    <title>Movies4U | 100+ Movies Pro</title>
     <style>
-        :root { --accent: #ffcc00; --bg: #050505; }
+        :root { --accent: #ffcc00; --bg: #050505; --card-bg: #111; }
+        
         body { 
-            margin: 0; font-family: 'Segoe UI', sans-serif; 
-            background: #050505; color: white; overflow-x: hidden;
+            margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); color: white; overflow-x: hidden;
         }
+
+        /* Navbar & Search */
         nav {
             position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; 
             align-items: center; padding: 15px 5%; z-index: 1000; background: rgba(0,0,0,0.95);
-            border-bottom: 1px solid #222; box-sizing: border-box;
+            backdrop-filter: blur(10px); border-bottom: 1px solid #222; box-sizing: border-box;
         }
-        .search-box { background: #1a1a1a; border: 1px solid #333; padding: 10px 20px; border-radius: 25px; color: white; width: 250px; outline: none; }
-        
+        .logo { font-size: 26px; font-weight: 900; color: var(--accent); letter-spacing: -1px; }
+        .search-box { background: #1a1a1a; border: 1px solid #333; padding: 10px 20px; border-radius: 25px; color: white; width: 220px; outline: none; }
+
+        /* Category Filter */
+        .filter-bar {
+            padding: 100px 5% 10px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none;
+        }
+        .filter-bar::-webkit-scrollbar { display: none; }
+        .filter-btn { 
+            padding: 8px 20px; background: #1a1a1a; border: 1px solid #333; border-radius: 20px; 
+            color: white; cursor: pointer; white-space: nowrap; transition: 0.3s;
+        }
+        .filter-btn.active { background: var(--accent); color: black; border-color: var(--accent); font-weight: bold; }
+
+        /* Movie Grid */
         .container { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); 
-            gap: 20px; padding: 100px 5% 50px; 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+            gap: 20px; padding: 20px 5% 50px; 
         }
-        .card { background: #111; border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
-        .card:hover { transform: scale(1.05); border-color: var(--accent); }
-        .card img { width: 100%; height: 250px; object-fit: cover; }
+        .card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #222; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card img { width: 100%; height: 240px; object-fit: cover; }
         .card-info { padding: 10px; text-align: center; }
         .card-info h3 { font-size: 14px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rating { color: var(--accent); font-size: 12px; font-weight: bold; margin-top: 5px; display: block; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; overflow-y: auto; }
-        .close-btn { position: fixed; top: 20px; left: 20px; background: var(--accent); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; }
-        
-        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 10px; } }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; overflow-y: auto; }
+        .close-btn { position: fixed; top: 20px; left: 20px; background: var(--accent); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; font-weight: bold; z-index: 6000; }
+        .modal-content { width: 90%; max-width: 1000px; margin: 60px auto; }
+        .video-container { position: relative; padding-top: 56.25%; border-radius: 15px; overflow: hidden; background: #111; box-shadow: 0 0 50px rgba(255,204,0,0.2); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        @media (max-width: 600px) { .container { grid-template-columns: 1fr 1fr; gap: 12px; } .search-box { width: 140px; } }
     </style>
 </head>
 <body>
 
 <nav>
-    <div style="font-size: 24px; font-weight: 900; color: var(--accent);">MOVIES4U</div>
-    <input type="text" id="searchInput" class="search-box" placeholder="ل ناڤ فیلمان بگەڕێ..." onkeyup="searchMovies()">
+    <div class="logo">MOVIES4U</div>
+    <input type="text" id="searchInput" class="search-box" placeholder="بگەڕێ..." onkeyup="filterAll()">
 </nav>
+
+<div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" onclick="setCategory('All', this)">هەمی</button>
+    <button class="filter-btn" onclick="setCategory('Action', this)">ئەکشن</button>
+    <button class="filter-btn" onclick="setCategory('Sci-Fi', this)">خەیالی</button>
+    <button class="filter-btn" onclick="setCategory('Drama', this)">دراما</button>
+    <button class="filter-btn" onclick="setCategory('Animation', this)">ئەنیمەیشن</button>
+    <button class="filter-btn" onclick="setCategory('Horror', this)">ترسناک</button>
+</div>
 
 <div class="container" id="movieGrid"></div>
 
 <div id="modal" class="modal">
     <button class="close-btn" onclick="closeM()">✕</button>
-    <div style="width: 90%; max-width: 1000px; margin: 50px auto; text-align: center;">
-        <div style="position: relative; padding-top: 56.25%; border-radius: 15px; overflow: hidden; background: #111;">
-            <iframe id="frame" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="" frameborder="0" allowfullscreen></iframe>
+    <div class="modal-content">
+        <div class="video-container">
+            <iframe id="frame" src="" frameborder="0" allowfullscreen></iframe>
         </div>
-        <h1 id="mTitle" style="color: var(--accent); margin-top: 25px;"></h1>
-        <p id="mDesc" style="color: #bbb; line-height: 1.6; font-size: 18px;"></p>
+        <h1 id="mTitle" style="color: var(--accent); margin-top: 25px; font-size: 32px;"></h1>
+        <p id="mDesc" style="color: #bbb; line-height: 1.8; font-size: 18px;"></p>
     </div>
 </div>
 
 <script>
     const movies = [
-        { title: "Interstellar", rating: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا گەردوونی بۆ پاراستنا مروڤایەتیێ." },
-        { title: "The Joker", rating: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا تاری یا ئارسەر فلێک." },
-        { title: "Inception", rating: "8.8", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0", desc: "دزینا نهێنیان دناڤ خەونان دا." },
-        { title: "The Dark Knight", rating: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان ڕووبەڕووی جۆکەری دبیتەڤە." },
-        { title: "Avatar 2", rating: "7.6", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg", link: "https://www.youtube.com/embed/d9MyW72ELq0", desc: "گەشتەکا نوی د جیهانێ ئاڤێ دا." },
-        { title: "John Wick 4", rating: "7.8", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJhMTEtOTdkZGFjNmZiMTE2XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkHuJ8I", desc: "جۆن ویک تۆڵەی خۆ دەکاتەوە." },
-        { title: "Oppenheimer", rating: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1Zi00N2MzLTk5ZGYtMWUxY2FlZTgyMjYzXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/uYPbbksJxIg", desc: "چیرۆکا دروستکەری بۆمبا ئەتۆمی." },
-        { title: "Spider-Man", rating: "8.2", poster: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg", link: "https://www.youtube.com/embed/JfVOs4VSpmA", desc: "سپایدەرمان دگەل مولتیڤێرسێ." },
-        { title: "The Godfather", rating: "9.2", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", link: "https://www.youtube.com/embed/UaVTIH8mujA", desc: "مەزنترین چیرۆکا مافیایێ." },
-        { title: "The Shawshank", rating: "9.3", poster: "https://m.media-amazon.com/images/M/MV5BNDE3ODcxNzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg", link: "https://www.youtube.com/embed/PLl99DgF6b4", desc: "ئومێد و ئازادی دناڤ زیندانێ دا." }
-        // تو دشێی لێرە هەتا ۱۰۰ فیلمان زێدە بکەی...
+        { title: "Interstellar", cat: "Sci-Fi", rating: "8.7", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/zSWdZVtXT7E", desc: "گەشتەکا گەردوونی بۆ پاراستنا مروڤایەتیێ." },
+        { title: "The Joker", cat: "Drama", rating: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMGQ1ZGQyNTQtYzZkYS00NzU3LTk1ZTYtOWM3NTc5OTFjMWFhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg", link: "https://www.youtube.com/embed/t433PEQGErc", desc: "چیرۆکا تاری یا ئارسەر فلێک." },
+        { title: "Inception", cat: "Sci-Fi", rating: "8.8", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/YoHD9XEInc0", desc: "دزینا نهێنیان دناڤ خەونان دا." },
+        { title: "John Wick 4", cat: "Action", rating: "7.8", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJhMTEtOTdkZGFjNmZiMTE2XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/qEVUrkHuJ8I", desc: "جۆن ویک و شەڕێ جیهانی." },
+        { title: "Spider-Man", cat: "Action", rating: "8.2", poster: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_.jpg", link: "https://www.youtube.com/embed/JfVOs4VSpmA", desc: "گەشتەک دناڤ مولتیڤێرسێ دا." },
+        { title: "Lion King", cat: "Animation", rating: "8.5", poster: "https://m.media-amazon.com/images/M/MV5BYTYxNGMyZTYtMjE3MS00MzNjLWFjNmYtMDk3N2FmM2JiM2M1XkEyXkFqcGdeQXVyNjY5NDU4NzI@._V1_.jpg", link: "https://www.youtube.com/embed/7TavVZMewpY", desc: "چیرۆکا سیمبایێ پاشا." },
+        { title: "The Conjuring", cat: "Horror", rating: "7.5", poster: "https://m.media-amazon.com/images/M/MV5BMTM3NjA1OTYwNV5BMl5BanBnXkFtZTcwMDEzMzM3OA@@._V1_.jpg", link: "https://www.youtube.com/embed/k10ETZ41q5o", desc: "چیرۆکەکا ترسناک یا ڕاستەقینە." },
+        { title: "The Dark Knight", cat: "Action", rating: "9.0", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg", link: "https://www.youtube.com/embed/EXeTwQWrcwY", desc: "باتمان دژی جۆکەری." },
+        { title: "Oppenheimer", cat: "Drama", rating: "8.4", poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1Zi00N2MzLTk5ZGYtMWUxY2FlZTgyMjYzXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg", link: "https://www.youtube.com/embed/uYPbbksJxIg", desc: "دروستکەرێ بۆمبا ئەتۆمی." },
+        { title: "Avatar 2", cat: "Sci-Fi", rating: "7.6", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg", link: "https://www.youtube.com/embed/d9MyW72ELq0", desc: "گەڕیان د جیهانا پاندۆرا دا." },
+        { title: "Toy Story 4", cat: "Animation", rating: "7.7", poster: "https://m.media-amazon.com/images/M/MV5BMTYzMDM4NzkxOV5BMl5BanBnXkFtZTgwNzM1MTE2NzM@._V1_.jpg", link: "https://www.youtube.com/embed/wmiIUN-7qhE", desc: "گەشتەکا نوی یا یارییان." },
+        { title: "The Godfather", cat: "Drama", rating: "9.2", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg", link: "https://www.youtube.com/embed/UaVTIH8mujA", desc: "مەزنترین زنجیرەیا مافیایێ." },
+        { title: "Extraction 2", cat: "Action", rating: "7.0", poster: "https://m.media-amazon.com/images/M/MV5BMDJiNzUwYzEtNmQ2Yy00NWE4LWEwNzctM2M0MjE0OGUxZTA3XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg", link: "https://www.youtube.com/embed/Y274jZs5s7s", desc: "تایلەر ڕەیک د زڤڕیتەڤە." },
+        { title: "IT", cat: "Horror", rating: "7.3", poster: "https://m.media-amazon.com/images/M/MV5BZDVkZmI0YzAtNzdjYi00ZjdlLWEyNWQtOTM3NTAxMzA3NmU4XkEyXkFqcGdeQXVyNzEzNjU1NDg@._V1_.jpg", link: "https://www.youtube.com/embed/hAUTdjf9rko", desc: "کلۆنێ ترسناک یێ پێننی وایز." },
+        { title: "Dune: Part Two", cat: "Sci-Fi", rating: "8.6", poster: "https://m.media-amazon.com/images/M/MV5BN2P2Y2NmZjktM2FmMS00MGYyLTgwZWYtYzdlM2ZkOTgzZGEzXkEyXkFqcGdeQXVyMTM1NjM2ODg1._V1_.jpg", link: "https://www.youtube.com/embed/Way9Dexny3w", desc: "تۆڵەسەندنەوا پۆڵ ئەترێیدس." }
+        // ... لێرە تو دشێی ب سەدان فیلمێن دی زێدە بکەی
     ];
+
+    let currentCat = "All";
 
     function renderMovies(data) {
         const grid = document.getElementById('movieGrid');
-        grid.innerHTML = data.map((m, index) => `
-            <div class="card" onclick="openM(${index})">
-                <img src="${m.poster}" loading="lazy">
+        grid.innerHTML = data.map(m => `
+            <div class="card" onclick="openM('${m.title}', '${m.link}', '${m.desc}')">
+                <img src="${m.poster}" alt="${m.title}" loading="lazy">
                 <div class="card-info">
                     <h3>${m.title}</h3>
-                    <span style="color:var(--accent); font-size:12px;">⭐ ${m.rating}</span>
+                    <span class="rating">⭐ ${m.rating}</span>
                 </div>
             </div>
         `).join('');
     }
 
-    function searchMovies() {
+    function setCategory(cat, btn) {
+        currentCat = cat;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterAll();
+    }
+
+    function filterAll() {
         const term = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = movies.filter(m => m.title.toLowerCase().includes(term));
+        const filtered = movies.filter(m => {
+            const matchCat = (currentCat === "All" || m.cat === currentCat);
+            const matchSearch = m.title.toLowerCase().includes(term);
+            return matchCat && matchSearch;
+        });
         renderMovies(filtered);
     }
 
-    function openM(index) {
-        const m = movies[index];
-        document.getElementById('frame').src = m.link;
-        document.getElementById('mTitle').innerText = m.title;
-        document.getElementById('mDesc').innerText = m.desc;
+    function openM(title, link, desc) {
+        document.getElementById('frame').src = link;
+        document.getElementById('mTitle').innerText = title;
+        document.getElementById('mDesc').innerText = desc;
         document.getElementById('modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
 
     function closeM() {
         document.getElementById('modal').style.display = 'none';
         document.getElementById('frame').src = "";
+        document.body.style.overflow = 'auto';
     }
 
+    // دەستپێکرن
     renderMovies(movies);
 </script>
 </body>
