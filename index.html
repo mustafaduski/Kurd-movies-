@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 MUSTAFA PRO | THE ULTIMATE VERSION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;500;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e50914; --gold: #ffc107; --kids: #2ecc71; --bg: #050505; --sidebar-w: 280px; }
+        body { background-color: var(--bg); color: white; font-family: 'Vazirmatn', sans-serif; margin: 0; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* Header PRO */
+        header { 
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+            padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
+            position: fixed; top: 0; width: 100%; z-index: 1000; transition: 0.5s; box-sizing: border-box; backdrop-filter: blur(10px);
+        }
+        header.scrolled { background: rgba(0, 0, 0, 0.95); border-bottom: 1px solid #222; }
+
+        .search-container { position: relative; display: flex; align-items: center; }
+        .search-box { 
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); 
+            color: white; padding: 8px 35px 8px 15px; border-radius: 20px; 
+            width: 150px; outline: none; transition: 0.4s;
+        }
+        .search-box:focus { width: 250px; border-color: var(--primary); background: rgba(255,255,255,0.2); }
+        .search-icon { position: absolute; right: 12px; color: #888; font-size: 0.8rem; }
+
+        .header-icons { display: flex; align-items: center; gap: 15px; margin-left: 20px; }
+        .icon-btn { cursor: pointer; font-size: 1.2rem; transition: 0.3s; position: relative; }
+        .icon-btn:hover { color: var(--primary); transform: scale(1.1); }
+        .badge { position: absolute; top: -5px; right: -8px; background: var(--primary); font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; }
+
+        /* Sidebar */
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #0c0c0c; z-index: 3000; transition: 0.4s; padding: 20px; border-right: 1px solid #222; overflow-y: auto; box-sizing: border-box; }
+        .sidebar.open { left: 0; box-shadow: 10px 0 50px black; }
+        .menu-title { color: #555; font-size: 0.7rem; margin: 15px 0 5px; text-transform: uppercase; }
+        .menu-item { padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; display: block; color: #ccc; text-decoration: none; margin-bottom: 5px; }
+        .menu-item:hover { background: #1a1a1a; color: var(--primary); }
+        .gold-item { color: var(--gold) !important; border: 1px solid var(--gold); }
+        .kids-item { color: var(--kids) !important; border: 1px solid var(--kids); }
+
+        /* Hero */
+        #hero { height: 80vh; width: 100%; background-size: cover; background-position: center; display: flex; align-items: center; position: relative; }
+        #hero::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; background: linear-gradient(to top, var(--bg), transparent); }
+        .hero-content { position: relative; z-index: 10; padding: 0 7%; max-width: 600px; }
+
+        /* Grid */
+        #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; padding: 40px 5%; margin-top: -80px; position: relative; z-index: 20; }
+        .card { background: #141414; border-radius: 12px; overflow: hidden; position: relative; transition: 0.4s; border: 1px solid #222; cursor: pointer; }
+        .card:hover { transform: translateY(-10px) scale(1.05); border-color: var(--primary); }
+        .card img { width: 100%; height: 280px; object-fit: cover; }
+        .rating { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 2px 8px; border-radius: 5px; color: var(--gold); font-weight: bold; font-size: 0.8rem; }
+
+        /* Movie Page */
+        #movie-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 4000; display: none; overflow-y: auto; }
+        .back-btn { position: fixed; top: 20px; right: 20px; z-index: 5000; background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 50px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div style="display:flex; align-items:center; gap:20px;">
+            <div style="font-size:24px; cursor:pointer;" onclick="toggleMenu()">☰</div>
+            <h1 style="color:var(--primary); margin:0; font-size:1.5rem; font-weight:800;">MUSTAFA PRO</h1>
+        </div>
+        
+        <div style="display:flex; align-items:center;">
+            <div class="search-container">
+                <input type="text" id="search" class="search-box" placeholder="Search...">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="header-icons">
+                <div class="icon-btn">❤️</div>
+                <div class="icon-btn">🔔<span class="badge">3</span></div>
+                <div style="width:35px; height:35px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer;">M</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="color:var(--primary)">MUSTAFA MENU</h3>
+        <div class="menu-item" onclick="location.reload()">🔥 Home</div>
+        
+        <div class="menu-title">تایبەت</div>
+        <div class="menu-item gold-item" onclick="filterData('top2026', '')">🏆 باشترینێن ٢٠٢٦</div>
+        <div class="menu-item kids-item" onclick="filterData('kids', '16,10751')">👶 Kids Mode</div>
+
+        <div class="menu-title">پۆلێنکرن</div>
+        <div class="menu-item" onclick="filterData('genre', '28')">🎬 ئەکشن (Action)</div>
+        <div class="menu-item" onclick="filterData('genre', '27')">👻 ترسناک (Horror)</div>
+
+        <div class="menu-title">زمان</div>
+        <div class="menu-item" onclick="filterData('lang', 'en')">🇺🇸 English</div>
+        <div class="menu-item" onclick="filterData('lang', 'ar')">🇮🇶 العربية</div>
+        <hr border="0" style="border-top:1px solid #222; margin:15px 0;">
+        <div class="menu-item" onclick="toggleMenu()">× Close</div>
+    </div>
+
+    <div id="hero">
+        <div class="hero-content">
+            <h1 id="hero-title" style="font-size:3rem; margin:0;">Loading...</h1>
+            <p id="hero-desc" style="color:#ccc; margin:20px 0;"></p>
+            <button class="icon-btn" id="hero-btn" style="background:var(--primary); color:white; padding:10px 25px; border-radius:5px; border:none; font-weight:800;">WATCH NOW</button>
+        </div>
+    </div>
+
+    <div id="grid"></div>
+    <div id="loader" style="text-align:center; padding:30px; display:none;">🍿 Loading more...</div>
+
+    <div id="movie-page">
+        <button class="back-btn" onclick="closeMoviePage()">← Back</button>
+        <div id="movie-content"></div>
+    </div>
+
+    <script>
+        const API_KEY = '3fd2be6f0c70a2a598f084ddfb75487c';
+        const IMG_PATH = 'https://image.tmdb.org/t/p/w1280';
+        let page = 1; let searchTerm = ''; let currentGenre = ''; let currentLang = ''; let isTop2026 = false; let isFetching = false;
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        async function setupHero() {
+            const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
+            const data = await res.json();
+            const movie = data.results[0];
+            document.getElementById('hero').style.backgroundImage = `url('${IMG_PATH + movie.backdrop_path}')`;
+            document.getElementById('hero-title').innerText = movie.title;
+            document.getElementById('hero-desc').innerText = movie.overview.substring(0, 160) + "...";
+            document.getElementById('hero-btn').onclick = () => openMoviePage(movie.id);
+        }
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            resetFilters();
+            fetchMovies(true);
+        });
+
+        function resetFilters() {
+            currentGenre = ''; currentLang = ''; isTop2026 = false; page = 1;
+            document.getElementById('grid').innerHTML = '';
+            document.getElementById('hero').style.display = searchTerm ? 'none' : 'flex';
+        }
+
+        async function fetchMovies(reset = false) {
+            if (isFetching) return;
+            if (reset) { page = 1; document.getElementById('grid').innerHTML = ''; }
+            isFetching = true;
+            document.getElementById('loader').style.display = 'block';
+
+            let url = searchTerm 
+                ? `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${searchTerm}&page=${page}`
+                : `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}`;
+
+            if (!searchTerm) {
+                if (isTop2026) url += `&primary_release_year=2026&sort_by=vote_average.desc&vote_count.gte=10`;
+                else url += `&sort_by=popularity.desc`;
+                if (currentGenre) url += `&with_genres=${currentGenre}`;
+                if (currentLang) url += `&with_original_language=${currentLang}`;
+            }
+
+            const res = await fetch(url);
+            const data = await res.json();
+            renderMovies(data.results);
+            isFetching = false;
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function renderMovies(movies) {
+            movies.forEach(movie => {
+                if (!movie.poster_path) return;
+                const el = document.createElement('div');
+                el.classList.add('card');
+                el.innerHTML = `
+                    <div class="rating">⭐ ${movie.vote_average.toFixed(1)}</div>
+                    <img src="${IMG_PATH + movie.poster_path}" onclick="openMoviePage(${movie.id})">
+                    <div style="padding:10px; text-align:center;"><h3 style="font-size:0.8rem; margin:0;">${movie.title}</h3></div>
+                `;
+                document.getElementById('grid').appendChild(el);
+            });
+        }
+
+        function filterData(type, value) {
+            searchTerm = ''; document.getElementById('search').value = '';
+            isTop2026 = (type === 'top2026');
+            currentGenre = (type === 'genre' || type === 'kids') ? value : '';
+            currentLang = (type === 'lang') ? value : '';
+            toggleMenu();
+            document.getElementById('hero').style.display = 'flex';
+            fetchMovies(true);
+        }
+
+        async function openMoviePage(id) {
+            const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&append_to_response=videos`);
+            const movie = await res.json();
+            const trailer = movie.videos.results.find(v => v.type === 'Trailer');
+            document.getElementById('movie-content').innerHTML = `
+                <div style="width:100%; height:50vh; background:url('${IMG_PATH + movie.backdrop_path}') center/cover; display:flex; align-items:flex-end;">
+                    <h1 style="padding:20px 5%; background:linear-gradient(transparent, black); width:100%;">${movie.title}</h1>
+                </div>
+                <div style="padding:30px 5%;">
+                    <p style="font-size:1.1rem; line-height:1.7;">${movie.overview}</p>
+                    ${trailer ? `<iframe style="width:100%; height:450px; border:none; margin-top:20px; border-radius:15px; border:2px solid var(--primary);" src="https://www.youtube.com/embed/${trailer.key}" allowfullscreen></iframe>` : ''}
+                </div>`;
+            document.getElementById('movie-page').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMoviePage() { document.getElementById('movie-page').style.display = 'none'; document.body.style.overflow = 'auto'; }
+
+        window.onscroll = () => {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 800) { page++; fetchMovies(); }
+        };
+
+        setupHero(); fetchMovies();
+    </script>
+</body>
+</html>
