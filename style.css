@@ -1,0 +1,40 @@
+:root { --primary: #e50914; --gold: #ffc107; --bg: #050505; --sidebar-w: 280px; }
+body { background-color: var(--bg); color: white; font-family: 'Vazirmatn', sans-serif; margin: 0; overflow-x: hidden; scroll-behavior: smooth; }
+
+/* Global Blur Header */
+header { 
+    background: rgba(0, 0, 0, 0.5); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; 
+    position: fixed; top: 0; width: 100%; z-index: 1000; backdrop-filter: blur(20px); box-sizing: border-box; transition: 0.4s;
+}
+
+/* Trending Hero Section (Netflix Style) */
+#hero { 
+    height: 85vh; width: 100%; background-size: cover; background-position: center; 
+    display: flex; align-items: center; position: relative; 
+}
+#hero::after { 
+    content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; 
+    background: linear-gradient(to top, var(--bg), transparent); 
+}
+.hero-content { position: relative; z-index: 10; padding: 0 7%; max-width: 800px; }
+.hero-title { font-size: 4rem; font-weight: 800; margin: 0; text-shadow: 2px 2px 20px rgba(0,0,0,0.5); }
+
+/* Elite Sidebar */
+.sidebar { 
+    position: fixed; top: 0; left: -280px; width: var(--sidebar-w); height: 100%; 
+    background: rgba(10, 10, 10, 0.8); z-index: 3000; transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+    backdrop-filter: blur(30px); border-right: 1px solid rgba(255,255,255,0.1); padding: 30px 20px; box-sizing: border-box;
+}
+.sidebar.open { left: 0; }
+.menu-item { 
+    display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; 
+    cursor: pointer; transition: 0.3s; color: #ccc; margin-bottom: 5px; 
+}
+.menu-item:hover { background: rgba(229, 9, 20, 0.2); color: white; transform: translateX(8px); }
+
+/* Movie Grid */
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; padding: 40px 5%; margin-top: -100px; position: relative; z-index: 20; }
+.card { background: #111; border-radius: 12px; overflow: hidden; position: relative; transition: 0.4s; border: 1px solid #222; cursor: pointer; }
+.card:hover { transform: scale(1.08); border-color: var(--primary); z-index: 30; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+.card img { width: 100%; height: 300px; object-fit: cover; }
+.rating { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 4px 10px; border-radius: 6px; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
